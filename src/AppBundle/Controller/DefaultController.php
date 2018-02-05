@@ -7,7 +7,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-
+/**
+ * @Route("/api")
+ * @Method({"GET"})
+ */
 class DefaultController extends Controller
 {
     /**
@@ -15,7 +18,7 @@ class DefaultController extends Controller
      *      name="homepage")
      * @Method({"GET"})
      */
-    public function indexAction(Request $request, $username)
+    public function indexAction(Request $request, $username="")
     {
         return $this->render('default/index.html.twig', ['myVar' => $username]);
     }
