@@ -1,0 +1,27 @@
+{% extends "show/base.html.twig" %}
+
+{% block pageHeading %}
+    Create a show
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'id': 'form-user'}}) }}
+    {{ form_widget(form._token) }}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+                {{ form_errors(form.name) }}
+            </div>
+            <div class="col-lg-4">
+                {{ form_label(form.author) }}
+                {{ form_widget(form.author) }}
+                {{ form_errors(form.author) }}
+            </div>
+        </div>
+    </div>
+    {{ form_end(form, {'render_rest': false}) }}
+
+{% endblock %}
