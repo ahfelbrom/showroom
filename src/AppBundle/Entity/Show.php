@@ -5,12 +5,16 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 
-// ----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+// -----------------------------------------------------------------------------
 
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="show")
+ * @ORM\Table(name="s_show")
  */
 class Show
 {
@@ -22,44 +26,60 @@ class Show
     protected $id;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="name", type="string", length=50)
+     * 
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 50,
+     *      maxMessage = "La longueur maximale du nom est de {{ limit }} caractères"
+     * )
      */
     private $name;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="abstract", type="text")
+     * 
+     * @Assert\NotBlank()
      */
     private $abstract;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="country", type="string", length=50)
+     * 
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 50,
+     *      maxMessage = "La longueur maximale du pays est de {{ limit }} caractères"
+     * )
      */
     private $country;
 
     /**
-     * @var integer
-     *
      * @ORM\Column(name="author", type="string", length=50)
+     * 
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 50,
+     *      maxMessage = "La longueur maximale du nom de l'auteur est de {{ limit }} caractères"
+     * )
      */
     private $author;
 
     /**
-     * @var integer
-     *
      * @ORM\Column(name="release_date", type="date")
+     * 
+     * @Assert\NotBlank()
      */
     private $releaseDate;
 
     /**
-     * @var integer
-     *
      * @ORM\Column(name="main_picture", type="string", length=50)
+     * 
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 50,
+     *      maxMessage = "La longueur maximale du nom de la photo est de {{ limit }} caractères"
+     * )
      */
     private $mainPicture;
 

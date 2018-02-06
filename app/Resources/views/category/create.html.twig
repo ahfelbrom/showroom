@@ -1,0 +1,16 @@
+{% extends "show/base.html.twig" %}
+
+{% block pageHeading %}
+    Create a category
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'id': 'form-show', 'novalidate':"novalidate"}}) }}
+    {{ form_label(form.name) }}
+    {{ form_widget(form.name) }}
+    {{ form_errors(form.name) }}
+    <input type="submit" name="Créer" value="Créer">
+    {{ form_end(form) }}
+
+{% endblock %}

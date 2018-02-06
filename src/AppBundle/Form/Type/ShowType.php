@@ -42,23 +42,23 @@ class ShowType extends AbstractType
             array
             ( )
         );
-        // $builder->add
-        // (
-        //     'category',
-        //     EntityType::class,
-        //     array
-        //     (
-        //         'class' => 'AppBundle:Category',
-        //         'query_builder' => function(EntityRepository $er)
-        //         {
-        //             return $er->createQueryBuilder('c')->orderBy('c.name', 'ASC');
-        //         },
-        //         'choice_label' => 'name',
-        //         'expanded' => false,
-        //         'multiple' => false,
-        //         'placeholder' => 'Choisissez la catégorie',
-        //     )
-        // );
+        $builder->add
+        (
+            'category',
+            EntityType::class,
+            array
+            (
+                'class' => 'AppBundle:Category',
+                'query_builder' => function(EntityRepository $er)
+                {
+                    return $er->createQueryBuilder('c')->orderBy('c.name', 'ASC');
+                },
+                'choice_label' => 'name',
+                'expanded' => false,
+                'multiple' => false,
+                'placeholder' => 'Choisissez la catégorie',
+            )
+        );
         $builder->add
         (
             'abstract',
@@ -71,7 +71,9 @@ class ShowType extends AbstractType
             'country',
             CountryType::class,
             array
-            ( )
+            (
+                'preferred_choices' => array('FR')
+            )
         );
         $builder->add
         (

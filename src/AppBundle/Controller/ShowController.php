@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 //------------------------------------------------------------------------------
 
 use AppBundle\Entity\Show;
+use AppBundle\Entity\Category;
 use AppBundle\Form\Type\ShowType;
 
 //------------------------------------------------------------------------------
@@ -29,7 +30,7 @@ class ShowController extends Controller
     }
 
     /**
-     * @Route("/create", name="create")
+     * @Route("/show/create", name="create")
      *
      */
     public function createAction(Request $request)
@@ -49,15 +50,18 @@ class ShowController extends Controller
 
         if ($form->isSubmitted() && $form->isValid())
         {
-            $file = $show->getMainPicture();
-            $fileName = $file->getClientOriginalName();
-            $file = $file->move(__DIR__."/../../../web/images/", $fileName);
-            $show->setMainPicture($fileName);
-            
+            $generatedName = time()."_".$show->getCategory()->getName().".".$show->getMainPicture()->guessClientExtension();
+            $path = $this->getParameter('kernel.project_dir')."/web".$this->getParameter('upload_directory_file');
+
+            $file = $show->getMainPicture()->move($path, $generatedName);
+            $show->setMainPicture($generatedName);
+
             $em->persist($show);
             $em->flush();
 
-            dump('ok');die;
+            $this->addFlash('success', 'La série a bien été enregistrée');
+
+            return $this->redirectToRoute('show_list');
         }
 
         return $this->render('show/create.html.twig', array(
@@ -67,9 +71,13 @@ class ShowController extends Controller
 
     public function categoriesAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+        $categories = $em->getRepository('AppBundle:Category')->findAll();
         return $this->render(
             '_includes/categories.html.twig',
-            ['categories' => ['Web design', 'HTML', 'Freebies', 'Javascript', 'CSS', 'Tutorials']
-        ]);
+            [
+                'categories' => $categories
+            ]
+        );
     }
 }

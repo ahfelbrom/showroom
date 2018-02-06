@@ -5,8 +5,11 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 
-// ----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
+use Symfony\Component\Validator\Constraints as Assert;
+
+// -----------------------------------------------------------------------------
 
 /**
  * @ORM\Entity
@@ -22,9 +25,13 @@ class Category
     protected $id;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="name", type="string", length=50)
+     * 
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 50,
+     *      maxMessage = "La longueur maximale du nom est de {{ limit }} caractères"
+     * )
      */
     private $name;
 
