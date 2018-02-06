@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Show;
 use AppBundle\Entity\Category;
 use AppBundle\Form\Type\ShowType;
-
+use AppBundle\File\FileUploader;
 //------------------------------------------------------------------------------
 
 
@@ -26,14 +26,18 @@ class ShowController extends Controller
      */
     public function listAction(Request $request)
     {
-        return $this->render('show/list.html.twig');
+        $shows = $this->getDoctrine()->getManager()->getRepository('AppBundle:Show')->findAll();
+        
+        return $this->render('show/list.html.twig', array(
+            'shows' => $shows
+        ));
     }
 
     /**
      * @Route("/show/create", name="create")
      *
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, FileUploader $fileUploader)
     {
         $em = $this->getDoctrine()->getManager();
         $show = new Show();
@@ -50,10 +54,7 @@ class ShowController extends Controller
 
         if ($form->isSubmitted() && $form->isValid())
         {
-            $generatedName = time()."_".$show->getCategory()->getName().".".$show->getMainPicture()->guessClientExtension();
-            $path = $this->getParameter('kernel.project_dir')."/web".$this->getParameter('upload_directory_file');
-
-            $file = $show->getMainPicture()->move($path, $generatedName);
+            $generatedName = $fileUploader->upload($show->getMainPicture(), $show->getCategory()->getName());
             $show->setMainPicture($generatedName);
 
             $em->persist($show);

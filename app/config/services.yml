@@ -33,3 +33,7 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+    AppBundle\File\FileUploader:
+        arguments:
+            $pathToProject: '%kernel.project_dir%'
+            $uploadDirectoryFile: '%upload_directory_file%'
