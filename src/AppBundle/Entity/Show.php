@@ -28,7 +28,7 @@ class Show
     /**
      * @ORM\Column(name="name", type="string", length=50)
      * 
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Please enter a name for the show")
      * @Assert\Length(
      *      max = 50,
      *      maxMessage = "La longueur maximale du nom est de {{ limit }} caractères"
@@ -39,14 +39,14 @@ class Show
     /**
      * @ORM\Column(name="abstract", type="text")
      * 
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Please enter an abstract for the show")
      */
     private $abstract;
 
     /**
      * @ORM\Column(name="country", type="string", length=50)
      * 
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Please enter a country for the show")
      * @Assert\Length(
      *      max = 50,
      *      maxMessage = "La longueur maximale du pays est de {{ limit }} caractères"
@@ -57,7 +57,7 @@ class Show
     /**
      * @ORM\Column(name="author", type="string", length=50)
      * 
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Please enter an author for the show")
      * @Assert\Length(
      *      max = 50,
      *      maxMessage = "La longueur maximale du nom de l'auteur est de {{ limit }} caractères"
@@ -68,17 +68,17 @@ class Show
     /**
      * @ORM\Column(name="release_date", type="date")
      * 
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Please select a date for the show")
      */
     private $releaseDate;
 
     /**
      * @ORM\Column(name="main_picture", type="string", length=50)
      * 
-     * @Assert\NotBlank()
-     * @Assert\Length(
-     *      max = 50,
-     *      maxMessage = "La longueur maximale du nom de la photo est de {{ limit }} caractères"
+     * @Assert\NotBlank(message="Please upload a picture for the show")
+     * @Assert\Image(
+     * minHeight=300,
+     * minWidth=750
      * )
      */
     private $mainPicture;

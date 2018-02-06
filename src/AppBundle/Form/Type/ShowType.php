@@ -72,7 +72,7 @@ class ShowType extends AbstractType
             CountryType::class,
             array
             (
-                'preferred_choices' => array('FR')
+                'preferred_choices' => array('FR', 'US')
             )
         );
         $builder->add
