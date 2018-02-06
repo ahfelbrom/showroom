@@ -8,7 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 //------------------------------------------------------------------------------
 
+use AppBundle\Entity\Show;
 use AppBundle\Form\Type\ShowType;
+
+//------------------------------------------------------------------------------
+
 
 /**
  * @Route(name="show_")
@@ -30,9 +34,13 @@ class ShowController extends Controller
      */
     public function createAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+        $show = new Show();
+        
         $form = $this->createForm
         (
             ShowType::class,
+            $show,
             array
             ()
         );
@@ -41,6 +49,14 @@ class ShowController extends Controller
 
         if ($form->isSubmitted() && $form->isValid())
         {
+            $file = $show->getMainPicture();
+            $fileName = $file->getClientOriginalName();
+            $file = $file->move(__DIR__."/../../../web/images/", $fileName);
+            $show->setMainPicture($fileName);
+            
+            $em->persist($show);
+            $em->flush();
+
             dump('ok');die;
         }
 

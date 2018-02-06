@@ -52,9 +52,9 @@ class Show
     /**
      * @var integer
      *
-     * @ORM\Column(name="released_date", type="date")
+     * @ORM\Column(name="release_date", type="date")
      */
-    private $releasedDate;
+    private $releaseDate;
 
     /**
      * @var integer
@@ -62,6 +62,12 @@ class Show
      * @ORM\Column(name="main_picture", type="string", length=50)
      */
     private $mainPicture;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    private $category;
 
 
     /**
@@ -132,16 +138,16 @@ class Show
         return $this->author;
     }
 
-    public function setReleasedDate($releasedDate)
+    public function setReleaseDate(\DateTime $releaseDate)
     {
-        $this->releasedDate = $releasedDate;
+        $this->releaseDate = $releaseDate;
 
         return $this;
     }
 
-    public function getReleasedDate()
+    public function getReleaseDate()
     {
-        return $this->releasedDate;
+        return $this->releaseDate;
     }
 
     public function setMainPicture($mainPicture)
@@ -156,7 +162,7 @@ class Show
         return $this->mainPicture;
     }
 
-    public function setCategory($category)
+    public function setCategory(Category $category)
     {
         $this->category = $category;
 
