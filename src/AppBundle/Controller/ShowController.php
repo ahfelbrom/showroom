@@ -70,6 +70,43 @@ class ShowController extends Controller
         ));
     }
 
+    /**
+     * @Route("/show/update/{id}", name="update")
+     */
+    public function updateAction(Request $request, Show $show, FileUploader $fileUploader)
+    {
+        $em = $this->getDoctrine()->getManager();
+        
+        $form = $this->createForm
+        (
+            ShowType::class,
+            $show,
+            array
+            (
+                'validation_groups' => ['update']
+            )
+        );
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $generatedName = $fileUploader->upload($show->getTmpPicture(), $show->getCategory()->getName());
+            $show->setMainPicture($generatedName);
+            
+            $em->persist($show);
+            $em->flush();
+
+            $this->addFlash('success', 'La série a bien été modifiée');
+
+            return $this->redirectToRoute('show_list');
+        }
+
+        return $this->render('show/create.html.twig', array(
+            'form' => $form->createView()
+        ));
+    }
+
     public function categoriesAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();

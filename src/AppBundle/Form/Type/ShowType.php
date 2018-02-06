@@ -91,7 +91,7 @@ class ShowType extends AbstractType
         );
         $builder->add
         (
-            'mainPicture',
+            'tmpPicture',
             FileType::class,
             array
             ( )
