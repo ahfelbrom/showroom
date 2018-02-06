@@ -6,22 +6,15 @@
 
 {% block content %}
 
-    {{ form_start(form, {'attr': {'id': 'form-user'}}) }}
-    {{ form_widget(form._token) }}
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4">
-                {{ form_label(form.name) }}
-                {{ form_widget(form.name) }}
-                {{ form_errors(form.name) }}
-            </div>
-            <div class="col-lg-4">
-                {{ form_label(form.author) }}
-                {{ form_widget(form.author) }}
-                {{ form_errors(form.author) }}
-            </div>
-        </div>
-    </div>
-    {{ form_end(form, {'render_rest': false}) }}
+    {{ form_start(form, {'attr': {'id': 'form-show', 'novalidate':"novalidate"}}) }} {# novalidate pour empêcher la validation par html5 #}
+    {# {{ form_widget(form) }} #}
+
+    {# {{ form_row(form.name) }} #}
+    {{ form_label(form.name) }}
+    {{ form_widget(form.name) }}
+    {{ form_errors(form.name) }}
+    {{ form_rest(form) }}
+    <input type="submit" name="Créer" value="Créer">
+    {{ form_end(form) }}
 
 {% endblock %}

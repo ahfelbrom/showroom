@@ -15,7 +15,9 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/{username}",
-     *      name="homepage")
+     *      name="homepage",
+     *      requirements={"username" = ".*"},
+     *      schemes={"http", "https"}),
      * @Method({"GET"})
      */
     public function indexAction(Request $request, $username="")
