@@ -73,10 +73,8 @@ class ShowController extends Controller
     /**
      * @Route("/show/update/{id}", name="update")
      */
-    public function updateAction(Request $request, Show $show, FileUploader $fileUploader)
-    {
+    public function updateAction(Request $request, Show $show, FileUploader $fileUploader) {
         $em = $this->getDoctrine()->getManager();
-        
         $form = $this->createForm
         (
             ShowType::class,
@@ -86,19 +84,13 @@ class ShowController extends Controller
                 'validation_groups' => ['update']
             )
         );
-
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $generatedName = $fileUploader->upload($show->getTmpPicture(), $show->getCategory()->getName());
             $show->setMainPicture($generatedName);
-            
             $em->persist($show);
             $em->flush();
-
             $this->addFlash('success', 'La série a bien été modifiée');
-
             return $this->redirectToRoute('show_list');
         }
 
@@ -107,15 +99,33 @@ class ShowController extends Controller
         ));
     }
 
-    public function categoriesAction(Request $request)
-    {
+    public function categoriesAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $categories = $em->getRepository('AppBundle:Category')->findAll();
+        
         return $this->render(
             '_includes/categories.html.twig',
             [
                 'categories' => $categories
             ]
         );
+    }
+
+    public function researchAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm
+        (
+            SearchType::class,
+            array
+            ( )
+        );
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            dump('found');die;
+        }
+
+        return $this->render('show/create.html.twig', array(
+            'form' => $form->createView()
+        ));
     }
 }
