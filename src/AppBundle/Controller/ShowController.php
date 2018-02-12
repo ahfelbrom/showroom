@@ -3,8 +3,12 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 //------------------------------------------------------------------------------
 
@@ -26,7 +30,16 @@ class ShowController extends Controller
      */
     public function listAction(Request $request)
     {
-        $shows = $this->getDoctrine()->getManager()->getRepository('AppBundle:Show')->findAll();
+        $showRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Show');
+        $session = $request->getSession();
+        
+        if ($session->has('query_search_shows')) {
+            $querySearchShows = $session->get('query_search_shows');
+            $shows = $showRepository->findAllByName($querySearchShows);
+            $request->getSession()->remove('query_search_shows');
+        } else {
+            $shows = $showRepository->findAll();
+        }
         
         return $this->render('show/list.html.twig', array(
             'shows' => $shows
@@ -52,9 +65,8 @@ class ShowController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid())
-        {
-            $generatedName = $fileUploader->upload($show->getMainPicture(), $show->getCategory()->getName());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $generatedName = $fileUploader->upload($show->getTmpPicture(), $show->getCategory()->getName());
             $show->setMainPicture($generatedName);
 
             $em->persist($show);
@@ -73,7 +85,8 @@ class ShowController extends Controller
     /**
      * @Route("/show/update/{id}", name="update")
      */
-    public function updateAction(Request $request, Show $show, FileUploader $fileUploader) {
+    public function updateAction(Request $request, Show $show, FileUploader $fileUploader)
+    {
         $em = $this->getDoctrine()->getManager();
         $form = $this->createForm
         (
@@ -99,7 +112,8 @@ class ShowController extends Controller
         ));
     }
 
-    public function categoriesAction(Request $request) {
+    public function categoriesAction(Request $request)
+    {
         $em = $this->getDoctrine()->getManager();
         $categories = $em->getRepository('AppBundle:Category')->findAll();
         
@@ -111,21 +125,45 @@ class ShowController extends Controller
         );
     }
 
-    public function researchAction(Request $request) {
+    /**
+     * @Route("/show/search", name="search")
+     * @Method({"POST"})
+     */
+    public function searchAction(Request $request)
+    {
+        $request->getSession()->set('query_search_shows', $request->request->get('name'));
+        
+        return $this->redirectToRoute('show_list');
+    }
+
+    /**
+     * @Route("/show/delete", name="delete")
+     * @Method({"POST"})
+     */
+    public function deleteAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager)
+    {
         $em = $this->getDoctrine()->getManager();
-        $form = $this->createForm
-        (
-            SearchType::class,
-            array
-            ( )
-        );
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            dump('found');die;
+        $showId = $request->request->get('show_id');
+
+        $show = $em->getRepository('AppBundle:Show')->findOneById($showId);
+        if (!$show)
+        {
+            throw new NotFoundHttpException(sprintf("There is no show with id : %d", $showId));
+            
         }
 
-        return $this->render('show/create.html.twig', array(
-            'form' => $form->createView()
-        ));
+        $csrfToken = new CsrfToken('delete_show', $request->request->get('csrf_token'));
+
+        if ($csrfTokenManager->isTokenValid($csrfToken)) {
+            $em->remove($show);
+            $em->flush();
+            unlink(__DIR__."/../../../web/upload/".$show->getMainPicture());
+            $this->addFlash('success', 'the show has been removed for ever :D');
+        } else {
+            $this->addFlash('error', 'The csrf token is not valid. Stopping deletion');
+        }
+
+        
+        return $this->redirectToRoute("show_list");
     }
 }

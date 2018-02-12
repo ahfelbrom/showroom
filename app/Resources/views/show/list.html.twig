@@ -8,13 +8,20 @@
         <div class="card-body">
             <h2 class="card-title">{{ show.getName() }}</h2>
             <p class="card-text">{{ show.getAbstract }}</p>
-            <a href="#" class="btn btn-primary">Read More &rarr;</a>
+            <a href="{{ path('show_update', {'id': show.getId()}) }}" class="btn btn-primary">Update &rarr;</a>
+            <form action="{{ path('show_delete') }}" method="POST">
+                <input type="hidden" name="show_id" value="{{ show.getId() }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_show') }}">
+                <button class="btn btn-danger" type="submit">delete X</button>
+            </form>
         </div>
         <div class="card-footer text-muted">
             Posted on {{ show.getReleaseDate()|date('d/m/Y') }} by
             <a href="#">{{ show.getAuthor() }}</a>
         </div>
     </div>
+    {% else %}
+        <h2>No show to list :'(</h2>
     {% endfor %}
     <!-- Pagination -->
     <ul class="pagination justify-content-center mb-4">
