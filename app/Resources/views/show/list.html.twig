@@ -3,7 +3,7 @@
 {% block content %}
     {% if searched %}
         {% for way, show in shows %}
-            <h1>result from {{ way }}</h1>
+            <h2>result from {{ way }}</h2>
             {% if way == "local client" %}
                 {% for foundShow in show %}
                     <!-- Blog Post -->
@@ -25,7 +25,7 @@
                         </div>
                     </div>
                 {% else %}
-                    <h2>No show to list :'(</h2>
+                    <h3>No show to list :'(</h3>
                 {% endfor %}
             {% else %}
                 <!-- Blog Post -->
