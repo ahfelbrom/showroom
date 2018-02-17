@@ -16,6 +16,8 @@ use AppBundle\Entity\Show;
 use AppBundle\Entity\Category;
 use AppBundle\Form\Type\ShowType;
 use AppBundle\File\FileUploader;
+use AppBundle\ShowFinder\ShowFinder;
+
 //------------------------------------------------------------------------------
 
 
@@ -28,21 +30,25 @@ class ShowController extends Controller
      * @Route("/", name="list")
      *
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request, ShowFinder $showFinder)
     {
         $showRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Show');
         $session = $request->getSession();
         
         if ($session->has('query_search_shows')) {
             $querySearchShows = $session->get('query_search_shows');
-            $shows = $showRepository->findAllByName($querySearchShows);
+            $shows = $showFinder->searchByName($querySearchShows);
+            $searched = true;
+            
             $request->getSession()->remove('query_search_shows');
         } else {
             $shows = $showRepository->findAll();
+            $searched = false;
         }
         
         return $this->render('show/list.html.twig', array(
-            'shows' => $shows
+            'shows' => $shows,
+            'searched' => $searched
         ));
     }
 
