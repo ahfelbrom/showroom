@@ -15,7 +15,7 @@ parameters:
     mailer_user: ~
     mailer_password: ~
 
-    omdb_api_key: f35ff428
+    omdb_api_key: your_key
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
