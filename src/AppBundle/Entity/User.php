@@ -10,10 +10,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 // ----------------------------------------------------------------------------
 
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+// -----------------------------------------------------------------------------
+
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user")
+ * @UniqueEntity("email")
  */
 class User implements UserInterface
 {
@@ -38,6 +44,8 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string")
+     *
+     * @Assert\Email()
      */
     private $email;
 

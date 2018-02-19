@@ -34,4 +34,13 @@ class SecurityController extends Controller
     {
         dump('this code will never be red');
     }
+
+    /**
+     * @Route("/logout", name="app_logout")
+     *
+     */
+    public function logoutAction(AuthenticationUtils $utils)
+    {
+        dump('this code will never be red');
+    }
 }

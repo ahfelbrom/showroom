@@ -1,0 +1,28 @@
+{% extends "show/base.html.twig" %}
+
+{% block pageHeading %}
+    List of users
+{% endblock %}
+
+{% block content %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fullname</th>
+                <th>Username</th>
+                <th>Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td scope="row">{{ user.getId() }}</td>
+                    <td>{{ user.getFullname() }}</td>
+                    <td>{{ user.getUsername() }}</td>
+                    <td>{{ user.getRoles() | join(", ") }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

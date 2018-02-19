@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 //------------------------------------------------------------------------------
 
@@ -23,7 +24,7 @@ class UserController extends Controller
      * @Route("/create", name="create")
      *
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, EncoderFactoryInterface $encoderFactory)
     {
         $user = new User();
         
@@ -39,6 +40,12 @@ class UserController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
+            $encoder = $encoderFactory->getEncoder($user);
+            $hashedPassword = $encoder->encodePassword($user->getPassword(), null);
+
+            $user->setPassword($hashedPassword);
+
             $em->persist($user);
             $em->flush();
 
@@ -49,6 +56,20 @@ class UserController extends Controller
 
         return $this->render("user/create.html.twig", array(
             'form' => $form->createView()
+        ));
+    }
+
+    /**
+     * @Route("/", name="list")
+     *
+     */
+    public function listAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $users = $em->getRepository('AppBundle:User')->findAll();
+
+        return $this->render("user/list.html.twig", array(
+            'users' => $users
         ));
     }
 }
