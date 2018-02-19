@@ -1,71 +1,36 @@
 {% extends "show/base.html.twig" %}
 
 {% block content %}
-    {% if searched %}
-        {% for way, show in shows %}
-            <h2>result from {{ way }}</h2>
-            {% if way == "local client" %}
-                {% for foundShow in show %}
-                    <!-- Blog Post -->
-                    <div class="card mb-4">
-                        <img class="card-img-top" src="{{ asset('upload/' ~ foundShow.getMainPicture()) }}" alt="Main picture">
-                        <div class="card-body">
-                            <h2 class="card-title">{{ foundShow.getName() }}</h2>
-                            <p class="card-text">{{ foundShow.getAbstract }}</p>
-                            <a href="{{ path('show_update', {'id': foundShow.getId()}) }}" class="btn btn-primary">Update &rarr;</a>
-                            <form action="{{ path('show_delete') }}" method="POST">
-                                <input type="hidden" name="show_id" value="{{ foundShow.getId() }}">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_show') }}">
-                                <button class="btn btn-danger" type="submit">delete X</button>
-                            </form>
-                        </div>
-                        <div class="card-footer text-muted">
-                            Posted on {{ foundShow.getReleaseDate()|date('d/m/Y') }} by
-                            <a href="#">{{ foundShow.getAuthor() }}</a>
-                        </div>
-                    </div>
-                {% else %}
-                    <h3>No show to list :'(</h3>
-                {% endfor %}
+    {% for show in shows %}
+        {% set img = '' %}
+        <!-- Blog Post -->
+        <div class="card mb-4">
+            {% if show.getDataSource() == constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
+                {% set img = asset('upload/' ~ show.getMainPicture()) %}
             {% else %}
-                <!-- Blog Post -->
-                    <div class="card mb-4">
-                        <img class="card-img-top" src="{{ show['mainPicture'] }}" alt="Main picture">
-                        <div class="card-body">
-                            <h2 class="card-title">{{ show['name'] }}</h2>
-                            <p class="card-text">{{ show['abstract'] }}</p>
-                        </div>
-                        <div class="card-footer text-muted">
-                            Posted on {{ show['releasedDate'] }} by
-                            <a href="#">{{ show['author'] }}</a>
-                        </div>
-                    </div>
+                {% set img = show.getMainPicture() %}
             {% endif %}
-        {% endfor %}
-    {% else %}
-        {% for show in shows %}
-            <!-- Blog Post -->
-            <div class="card mb-4">
-                <img class="card-img-top" src="{{ asset('upload/' ~ show.getMainPicture()) }}" alt="Main picture">
-                <div class="card-body">
-                    <h2 class="card-title">{{ show.getName() }}</h2>
-                    <p class="card-text">{{ show.getAbstract }}</p>
+            <img class="card-img-top" src="{{ img }}" alt="Main picture">
+            <div class="card-body">
+                <h2 class="card-title">{{ show.getName() }}</h2>
+                <p class="card-text">{{ show.getAbstract() }}</p>
+                {% if show.getDataSource() == constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
                     <a href="{{ path('show_update', {'id': show.getId()}) }}" class="btn btn-primary">Update &rarr;</a>
                     <form action="{{ path('show_delete') }}" method="POST">
                         <input type="hidden" name="show_id" value="{{ show.getId() }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_show') }}">
                         <button class="btn btn-danger" type="submit">delete X</button>
                     </form>
-                </div>
-                <div class="card-footer text-muted">
-                    Posted on {{ show.getReleaseDate()|date('d/m/Y') }} by
-                    <a href="#">{{ show.getAuthor() }}</a>
-                </div>
+                {% endif %}
             </div>
-        {% else %}
-            <h2>No show to list :'(</h2>
-        {% endfor %}
-    {% endif %}
+            <div class="card-footer text-muted">
+                Posted on {{ show.getReleaseDate()|date('d/m/Y') }} by
+                <a href="#">{{ show.getAuthor() }}</a>
+            </div>
+        </div>
+    {% else %}
+        <h2>No show to list :'(</h2>
+    {% endfor %}
     <!-- Pagination -->
     <ul class="pagination justify-content-center mb-4">
         <li class="page-item">

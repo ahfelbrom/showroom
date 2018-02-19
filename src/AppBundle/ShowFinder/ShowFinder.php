@@ -12,7 +12,7 @@ class ShowFinder
         $founds = [];
 
         foreach ($this->finders as $finder) {
-            $founds[$finder->getName()] = $finder->findByName($query);
+            $founds = array_merge($founds, $finder->findByName($query));
         }
 
         return $founds;

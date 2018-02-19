@@ -49,13 +49,7 @@ class ShowType extends AbstractType
             array
             (
                 'class' => 'AppBundle:Category',
-                'query_builder' => function(EntityRepository $er)
-                {
-                    return $er->createQueryBuilder('c')->orderBy('c.name', 'ASC');
-                },
                 'choice_label' => 'name',
-                'expanded' => false,
-                'multiple' => false,
                 'placeholder' => 'Choisissez la catégorie',
             )
         );

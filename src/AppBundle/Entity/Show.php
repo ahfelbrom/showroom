@@ -18,6 +18,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Show
 {
+    const DATA_SOURCE_OMDB = "OMDB";
+    const DATA_SOURCE_DB = "In local Database";
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -95,6 +98,11 @@ class Show
      * @Assert\NotBlank(message="Please select a category for the show", groups={"create", "update"})
      */
     private $category;
+
+    /**
+     * @ORM\Column(name="data_source", type="string", options={"default": "In local Database"})
+     */
+    private $dataSource;
 
 
     /**
@@ -211,5 +219,17 @@ class Show
     public function getCategory()
     {
         return $this->category;
+    }
+
+    public function setDataSource($dataSource)
+    {
+        $this->dataSource = $dataSource;
+
+        return $this;
+    }
+
+    public function getDataSource()
+    {
+        return $this->dataSource;
     }
 }
