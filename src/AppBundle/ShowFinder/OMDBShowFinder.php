@@ -6,6 +6,10 @@ use GuzzleHttp\Client;
 
 //------------------------------------------------------------------------------
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+
+//------------------------------------------------------------------------------
+
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Show;
 use AppBundle\Entity\User;
@@ -19,10 +23,13 @@ class OMDBShowFinder implements ShowFinderInterface
 
     private $apiKey;
 
-    public function __construct(Client $client, $apiKey)
+    private $tokenStorage;
+
+    public function __construct(Client $client, $apiKey, TokenStorage $tokenStorage)
     {
         $this->client = $client;
         $this->apiKey = $apiKey;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function findByName($query)
@@ -49,14 +56,11 @@ class OMDBShowFinder implements ShowFinderInterface
         $category = new Category();
         $category->setName($json['Genre']);
 
-        $user = new User();
-        $user->setFullname('OMDB');
-
         $show = new Show();
         $show
             ->setName($json['Title'])
             ->setCategory($category)
-            ->setAuthor($user)
+            ->setAuthor($this->tokenStorage->getToken()->getUser())
             ->setDataSource(Show::DATA_SOURCE_OMDB);
         if ($json['Plot'] = "N/A")
             $show->setAbstract("not provided");

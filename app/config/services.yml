@@ -45,4 +45,11 @@ services:
         arguments:
             - '@csa_guzzle.client.OMDB_api'
             - '%omdb_api_key%'
+            - '@security.token_storage'
         tags: ['show.finder']
+
+    AppBundle\Security\Authorization\ShowVoter:
+        tags: ['security.voter']
+
+    AppBundle\Security\Authorization\UserVoter:
+        tags: ['security.voter']

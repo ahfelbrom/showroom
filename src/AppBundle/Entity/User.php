@@ -36,6 +36,9 @@ class User implements UserInterface
      */
     private $fullname;
 
+    /**
+     * @ORM\Column(type="json_array")
+     */
     private $roles;
 
     /**
@@ -87,9 +90,23 @@ class User implements UserInterface
         return $this->fullname;
     }
 
+    public function addRole($role)
+    {
+        $this->roles[] = $role;
+
+        return $this;
+    }
+
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
     public function getRoles()
     {
-        return ['ROLE_USER', 'ROLE_ADMIN'];
+        return $this->roles;
     }
 
     public function getPassword()
@@ -130,7 +147,7 @@ class User implements UserInterface
     {
         if (!($this->shows->contains($show)))
         {
-            $show->setUser($this);
+            $show->setAuthor($this);
             $this->shows->add($show);
         }
 

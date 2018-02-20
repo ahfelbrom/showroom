@@ -12,15 +12,20 @@
             {% endif %}
             <img class="card-img-top" src="{{ img }}" alt="Main picture">
             <div class="card-body">
+                {% if show.getDataSource() != constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
+                    <span class="badge badge-primary">{{ show.getDataSource() }}</span>
+                {% endif %}
                 <h2 class="card-title">{{ show.getName() }}</h2>
                 <p class="card-text">{{ show.getAbstract() }}</p>
                 {% if show.getDataSource() == constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
-                    <a href="{{ path('show_update', {'id': show.getId()}) }}" class="btn btn-primary">Update &rarr;</a>
-                    <form action="{{ path('show_delete') }}" method="POST">
-                        <input type="hidden" name="show_id" value="{{ show.getId() }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_show') }}">
-                        <button class="btn btn-danger" type="submit">delete X</button>
-                    </form>
+                    {% if is_granted('NOT USED', show) %}
+                        <a href="{{ path('show_update', {'id': show.getId()}) }}" class="btn btn-primary">Update &rarr;</a>
+                        <form action="{{ path('show_delete') }}" method="POST">
+                            <input type="hidden" name="show_id" value="{{ show.getId() }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_show') }}">
+                            <button class="btn btn-danger" type="submit">delete X</button>
+                        </form>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="card-footer text-muted">

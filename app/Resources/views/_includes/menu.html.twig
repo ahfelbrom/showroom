@@ -18,15 +18,15 @@
                 <li class="nav-item {% if app.request.attributes.get('_route') == 'category_create' %} active {% endif %}">
                     <a class="nav-link" href="{{path('category_create')}}">Create a category</a>
                 </li>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <li class="nav-item {% if app.request.attributes.get('_route') == 'user_create' %} active {% endif %}">
-                        <a class="nav-link" href="{{path('user_create')}}">Create an user</a>
-                    </li>
-                    <li class="nav-item {% if app.request.attributes.get('_route') == 'user_list' %} active {% endif %}">
-                        <a class="nav-link" href="{{path('user_list')}}">List all users</a>
-                    </li>
-                {% endif %}
                 {% if app.user %}
+                    {% if is_granted('ROLE_ADMIN', app.user) %}
+                        <li class="nav-item {% if app.request.attributes.get('_route') == 'user_create' %} active {% endif %}">
+                            <a class="nav-link" href="{{path('user_create')}}">Create an user</a>
+                        </li>
+                        <li class="nav-item {% if app.request.attributes.get('_route') == 'user_list' %} active {% endif %}">
+                            <a class="nav-link" href="{{path('user_list')}}">List all users</a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{path('app_logout')}}">logout</a>
                     </li>

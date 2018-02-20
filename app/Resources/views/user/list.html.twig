@@ -12,6 +12,7 @@
                 <th>Fullname</th>
                 <th>Username</th>
                 <th>Roles</th>
+                <th>Shows</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +22,16 @@
                     <td>{{ user.getFullname() }}</td>
                     <td>{{ user.getUsername() }}</td>
                     <td>{{ user.getRoles() | join(", ") }}</td>
+                    <td>
+                        {% for show in user.getShows() %}
+                            {{ show.name }}
+                            {% if not loop.last %}
+                                ; 
+                            {% endif %}
+                        {% else %}
+                            No shows yet :'(
+                        {% endfor %}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

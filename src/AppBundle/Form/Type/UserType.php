@@ -10,11 +10,13 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 // -----------------------------------------------------------------------------
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -40,6 +42,27 @@ class UserType extends AbstractType
             array
             ( )
         );
+        $builder->add
+        (
+            'roles',
+            TextType::class,
+            array(
+                'label' => 'Roles separated by commas (, )'
+            )
+        );
+        $builder->get('roles')->addModelTransformer(new CallbackTransformer(
+            function($rolesAsArray) {
+                // From Model to view => Array to string
+                if (!empty($rolesAsArray))
+                {
+                    return implode(", ", $rolesAsArray);
+                }
+            },
+            function($rolesAsString) {
+                // From view to Model => string to Array
+                return explode(", ", $rolesAsString);
+            }
+        ));
         $builder->add
         (
             'username',

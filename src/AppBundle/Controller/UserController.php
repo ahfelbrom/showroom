@@ -26,6 +26,7 @@ class UserController extends Controller
      */
     public function createAction(Request $request, EncoderFactoryInterface $encoderFactory)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = new User();
         
         $form = $this->createForm
@@ -65,6 +66,8 @@ class UserController extends Controller
      */
     public function listAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
         $em = $this->getDoctrine()->getManager();
         $users = $em->getRepository('AppBundle:User')->findAll();
 
