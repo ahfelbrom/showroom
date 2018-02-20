@@ -60,14 +60,8 @@ class Show
     private $country;
 
     /**
-     * @ORM\Column(name="author", type="string", length=50)
-     * 
-     * @Assert\NotBlank(message="Please enter an author for the show", groups={"create", "update"})
-     * @Assert\Length(
-     *      max = 50,
-     *      maxMessage = "La longueur maximale du nom de l'auteur est de {{ limit }} caractères",
-     *      groups={"create", "update"}
-     * )
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="shows")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $author;
 
@@ -161,7 +155,7 @@ class Show
     }
 
     
-    public function setAuthor($author)
+    public function setAuthor(User $author)
     {
         $this->author = $author;
 

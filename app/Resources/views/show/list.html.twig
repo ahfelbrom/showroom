@@ -25,7 +25,7 @@
             </div>
             <div class="card-footer text-muted">
                 Posted on {{ show.getReleaseDate()|date('d/m/Y') }} by
-                <a href="#">{{ show.getAuthor() }}</a>
+                <a href="#">{{ show.getAuthor().getFullname() }}</a>
             </div>
         </div>
     {% else %}

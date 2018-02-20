@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 // ----------------------------------------------------------------------------
 
@@ -49,6 +50,14 @@ class User implements UserInterface
      */
     private $email;
 
+    /**
+     * The attribute for the tasks of the Consultation
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Show", cascade={"persist", "remove"}, orphanRemoval=true, mappedBy="author")
+     */
+    private $shows;
+
 
     /**
      *
@@ -57,6 +66,7 @@ class User implements UserInterface
      */
     public function __construct()
     {
+        $this->shows = new ArrayCollection();
     }
 
     public function getId()
@@ -79,7 +89,7 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        return ['ROLE_USER', 'ROLE_ADMIN'];
     }
 
     public function getPassword()
@@ -114,5 +124,31 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // erase sensible informations of the user (here there are none)
+    }
+
+    public function addShow(Show $show)
+    {
+        if (!($this->shows->contains($show)))
+        {
+            $show->setUser($this);
+            $this->shows->add($show);
+        }
+
+        return $this;
+    }
+
+    public function removeShow(Show $show)
+    {
+        if ($this->shows->contains($show))
+        {
+            $this->shows->removeElement($show);
+        }
+
+        return $this;
+    }
+
+    public function getShows()
+    {
+        return $this->shows;
     }
 }

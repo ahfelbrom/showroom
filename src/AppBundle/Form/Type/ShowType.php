@@ -71,13 +71,6 @@ class ShowType extends AbstractType
         );
         $builder->add
         (
-            'author',
-            TextType::class,
-            array
-            ( )
-        );
-        $builder->add
-        (
             'releaseDate',
             DateType::class,
             array

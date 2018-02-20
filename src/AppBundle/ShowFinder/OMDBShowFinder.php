@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Show;
+use AppBundle\Entity\User;
 
 //------------------------------------------------------------------------------
 
@@ -29,8 +30,9 @@ class OMDBShowFinder implements ShowFinderInterface
         $response_shows = $this->client->get('/?apikey='.$this->apiKey.'&type=series&t="'.$query.'"');
         $response_show_table = \GuzzleHttp\json_decode($response_shows->getBody(), true);
 
-        if ($response_show_table['response'] == 'False')
+        if ($response_show_table['Response'] == 'False' && $response_show_table['Error'] == 'Series not found!') {
             return array();
+        }
         return $this->convertToShow($response_show_table);
     }
 
@@ -47,11 +49,14 @@ class OMDBShowFinder implements ShowFinderInterface
         $category = new Category();
         $category->setName($json['Genre']);
 
+        $user = new User();
+        $user->setFullname('OMDB');
+
         $show = new Show();
         $show
             ->setName($json['Title'])
             ->setCategory($category)
-            ->setAuthor('To do later')
+            ->setAuthor($user)
             ->setDataSource(Show::DATA_SOURCE_OMDB);
         if ($json['Plot'] = "N/A")
             $show->setAbstract("not provided");

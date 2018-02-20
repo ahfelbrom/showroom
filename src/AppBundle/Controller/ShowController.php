@@ -72,6 +72,7 @@ class ShowController extends Controller
             $generatedName = $fileUploader->upload($show->getTmpPicture(), $show->getCategory()->getName());
             $show->setMainPicture($generatedName);
             $show->setDataSource(Show::DATA_SOURCE_DB);
+            $this->getUser()->addShow($show);
 
             $em->persist($show);
             $em->flush();
@@ -159,6 +160,7 @@ class ShowController extends Controller
         $csrfToken = new CsrfToken('delete_show', $request->request->get('csrf_token'));
 
         if ($csrfTokenManager->isTokenValid($csrfToken)) {
+            $this->getUser()->removeShow($show);
             $em->remove($show);
             $em->flush();
             unlink(__DIR__."/../../../web/upload/".$show->getMainPicture());
