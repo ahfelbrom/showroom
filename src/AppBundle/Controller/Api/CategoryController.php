@@ -9,7 +9,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 //------------------------------------------------------------------------------
 
@@ -53,6 +55,81 @@ class CategoryController extends Controller
         $data = $serializer->serialize($category, 'json');
 
         return new Response($data, Response::HTTP_OK, array(
+            'Content-Type' => 'application\json'
+        ));
+    }
+
+    /**
+     * @Route("/categories", name="post")
+     * @Method({"POST"})
+     */
+    public function postAction(Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
+    {
+        $data = [
+            'error' => true,
+            'message' => 'Your category isn\'t valid'
+        ];
+        
+        $category = $serializer->deserialize($request->getContent(), Category::class, 'json');
+        
+        $errors = $validator->validate($category);
+
+        if ($errors->count() == 0) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($category);
+            $em->flush();
+
+            $data['error'] = false;
+            $data['message'] = 'your category has been successfully added';
+
+            $json = $serializer->serialize($data, 'json');
+
+            return new Response($json, Response::HTTP_CREATED, array(
+                'Content-Type' => 'application\json'
+            ));
+        }
+        $data['explication'] = $errors;
+        $json = $serializer->serialize($data, 'json');
+
+        return new Response($json, Response::HTTP_BAD_REQUEST, array(
+            'Content-Type' => 'application\json'
+        ));
+    }
+
+    /**
+     * @Route("/categories/{id}", name="put")
+     * @Method({"PUT"})
+     */
+    public function putAction(Category $category, Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
+    {
+        $data = [
+            'error' => true,
+            'message' => 'Your category isn\'t valid'
+        ];
+        
+        $newCategory = $serializer->deserialize($request->getContent(), Category::class, 'json');
+        
+        $errors = $validator->validate($newCategory);
+
+        if ($errors->count() == 0) {
+            $em = $this->getDoctrine()->getManager();
+            $category->update($newCategory);
+            
+            $em->flush();
+
+            $data['error'] = false;
+            $data['message'] = 'your category has been successfully updated';
+
+            $json = $serializer->serialize($data, 'json');
+
+            return new Response($json, Response::HTTP_OK, array(
+                'Content-Type' => 'application\json'
+            ));
+        }
+        $data['explication'] = $errors;
+        $json = $serializer->serialize($data, 'json');
+
+        return new Response($json, Response::HTTP_BAD_REQUEST, array(
             'Content-Type' => 'application\json'
         ));
     }

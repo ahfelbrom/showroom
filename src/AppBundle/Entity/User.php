@@ -45,12 +45,15 @@ class User implements UserInterface
      *
      * @JMS\Expose
      *
-     * @JMS\Groups({"user", "show"})
+     * @JMS\Groups({"user", "show", "creation"})
      */
     private $fullname;
 
     /**
      * @ORM\Column(type="json_array")
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"creation"})
      */
     private $roles;
 
@@ -65,7 +68,7 @@ class User implements UserInterface
      * @Assert\Email()
      *
      * @JMS\Expose
-     * @JMS\Groups({"user"})
+     * @JMS\Groups({"user", "creation"})
      */
     private $email;
 

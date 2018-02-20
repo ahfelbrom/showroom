@@ -78,4 +78,9 @@ class Category
     {
         return $this->name;
     }
+
+    public function update(Category $category)
+    {
+        $this->setName($category->getName());
+    }
 }
