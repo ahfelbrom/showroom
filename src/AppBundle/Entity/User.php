@@ -16,11 +16,17 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 // -----------------------------------------------------------------------------
 
+use JMS\Serializer\Annotation as JMS;
+
+// -----------------------------------------------------------------------------
+
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user")
  * @UniqueEntity("email")
+ *
+ * @JMS\ExclusionPolicy("all")
  */
 class User implements UserInterface
 {
@@ -28,11 +34,18 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"user"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     *
+     * @JMS\Expose
+     *
+     * @JMS\Groups({"user", "show"})
      */
     private $fullname;
 
@@ -50,6 +63,9 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      *
      * @Assert\Email()
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"user"})
      */
     private $email;
 

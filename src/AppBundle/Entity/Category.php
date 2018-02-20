@@ -12,10 +12,18 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 // -----------------------------------------------------------------------------
 
+use JMS\Serializer\Annotation as JMS;
+
+// -----------------------------------------------------------------------------
+
+
 /**
  * @ORM\Entity
  * @ORM\Table(name="category")
+ *
  * @UniqueEntity("name", message="{{ value }} is already in database")
+ *
+ * @JMS\ExclusionPolicy("all")
  */
 class Category
 {
@@ -34,6 +42,8 @@ class Category
      *      max = 50,
      *      maxMessage = "La longueur maximale du nom est de {{ limit }} caractères"
      * )
+     *
+     * @JMS\Expose
      */
     private $name;
 

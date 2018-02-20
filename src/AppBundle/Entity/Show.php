@@ -11,10 +11,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 // -----------------------------------------------------------------------------
 
+use JMS\Serializer\Annotation as JMS;
+
+// -----------------------------------------------------------------------------
+
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ShowRepository")
  * @ORM\Table(name="s_show")
+ *
+ * @JMS\ExclusionPolicy("all")
  */
 class Show
 {
@@ -25,6 +31,9 @@ class Show
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"show"})
      */
     protected $id;
 
@@ -37,6 +46,9 @@ class Show
      *      maxMessage = "La longueur maximale du nom est de {{ limit }} caractères",
      *      groups={"create", "update"}
      * )
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"show"})
      */
     private $name;
 
@@ -44,6 +56,8 @@ class Show
      * @ORM\Column(name="abstract", type="text")
      * 
      * @Assert\NotBlank(message="Please enter an abstract for the show", groups={"create", "update"})
+     * @JMS\Expose
+     * @JMS\Groups({"show"})
      */
     private $abstract;
 
@@ -56,12 +70,18 @@ class Show
      *      maxMessage = "La longueur maximale du pays est de {{ limit }} caractères",
      *      groups={"create", "update"}
      * )
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"show"})
      */
     private $country;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="shows")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"show"})
      */
     private $author;
 
@@ -90,6 +110,8 @@ class Show
      * @ORM\ManyToOne(targetEntity="Category")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      * @Assert\NotBlank(message="Please select a category for the show", groups={"create", "update"})
+     *
+     * @JMS\Expose
      */
     private $category;
 

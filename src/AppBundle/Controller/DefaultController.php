@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/api")
+ * @Route("/apo")
  * @Method({"GET"})
  */
 class DefaultController extends Controller
