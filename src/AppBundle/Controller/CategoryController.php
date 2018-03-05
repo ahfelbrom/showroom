@@ -54,7 +54,7 @@ class CategoryController extends Controller
 
             $this->addFlash('success', 'La catégorie a bien été enregistrée');
 
-            return $this->redirectToRoute('category_list');
+            return $this->redirectToRoute('show_list');
         }
 
         return $this->render('category/create.html.twig', array(

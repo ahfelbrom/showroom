@@ -20,4 +20,14 @@ class ShowRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findAllFromCategory($categoryId)
+    {
+    	return $this->createQueryBuilder('s')
+    		->join('s.category', 'c')
+            ->where('c.id = :categoryId')
+            ->setParameter('categoryId', $categoryId)
+            ->getQuery()
+            ->getResult();
+    }
 }

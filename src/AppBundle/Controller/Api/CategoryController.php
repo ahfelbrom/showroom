@@ -133,4 +133,45 @@ class CategoryController extends Controller
             'Content-Type' => 'application\json'
         ));
     }
+
+    /**
+     * @Route("/categories/{id}", name="delete")
+     * @Method({"DELETE"})
+     */
+    public function deleteAction(Request $request, SerializerInterface $serializer)
+    {
+        $data = [
+            'error' => true,
+            'message' => 'The id for the category is not valid'
+        ];
+        $em = $this->getDoctrine()->getManager();
+
+        $category = $em->getRepository('AppBundle:Category')->findOneById($request->get('id'));
+
+        if ($category != null) {
+            $shows = $em->getRepository('AppBundle:Show')->findAllFromCategory($category->getId());
+            if ($shows != null)
+            {
+                foreach ($shows as $show) {
+                    $show->removeCategory();
+                }
+            }
+            $em->remove($category);
+            $em->flush();
+
+            $data['error'] = false;
+            $data['message'] = 'your category has been successfully deleted';
+
+            $json = $serializer->serialize($data, 'json');
+
+            return new Response($json, Response::HTTP_OK, array(
+                'Content-Type' => 'application\json'
+            ));
+        }
+        $json = $serializer->serialize($data, 'json');
+
+        return new Response($json, Response::HTTP_NOT_FOUND, array(
+            'Content-Type' => 'application\json'
+        ));
+    }
 }

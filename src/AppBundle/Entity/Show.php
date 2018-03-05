@@ -237,6 +237,13 @@ class Show
         return $this->category;
     }
 
+    public function removeCategory()
+    {
+        $this->category = null;
+
+        return $this;
+    }
+
     public function setDataSource($dataSource)
     {
         $this->dataSource = $dataSource;
