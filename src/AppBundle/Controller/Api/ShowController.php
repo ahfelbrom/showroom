@@ -176,25 +176,18 @@ class ShowController extends Controller
     {
         $data = [
             'error' => true,
-            'message' => 'The id for the category is not valid'
+            'message' => 'The show hasn\'t been found'
         ];
         $em = $this->getDoctrine()->getManager();
 
-        $category = $em->getRepository('AppBundle:Category')->findOneById($request->get('id'));
+        $show = $em->getRepository('AppBundle:Show')->findOneById($request->get('id'));
 
-        if ($category != null) {
-            $shows = $em->getRepository('AppBundle:Show')->findAllFromCategory($category->getId());
-            if ($shows != null)
-            {
-                foreach ($shows as $show) {
-                    $show->removeCategory();
-                }
-            }
-            $em->remove($category);
+        if ($show != null) {
+            $em->remove($show);
             $em->flush();
 
             $data['error'] = false;
-            $data['message'] = 'your category has been successfully deleted';
+            $data['message'] = 'your show has been successfully deleted';
 
             $json = $serializer->serialize($data, 'json');
 
