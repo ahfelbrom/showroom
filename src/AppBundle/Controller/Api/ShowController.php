@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
+use JMS\Serializer\DeserializationContext;
 
 //------------------------------------------------------------------------------
 
@@ -67,17 +68,39 @@ class ShowController extends Controller
      */
     public function postAction(Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
     {
+/*
+{
+    "category": {
+        "name": "science-fiction"
+    },
+    "name": "Doctor who",
+    "abstract": "The best show of the universe concerning the sci-fi category",
+    "country": "US",
+    "releaseDate": "2018-03-10",
+    "mainPicture": "https://vl-media.fr/wp-content/uploads/2017/12/matt-smith.jpg",
+    "dataSource": "API"
+}
+*/        
         $data = [
             'error' => true,
             'message' => 'Your show isn\'t valid'
         ];
         
+        $em = $this->getDoctrine()->getManager();
+        $deserializationContext = DeserializationContext::create();
+        $serializedData = json_decode($request->getContent(), true);
         $show = $serializer->deserialize($request->getContent(), Show::class, 'json');
-        dump($show);die;
+        $show->setReleaseDate(new \DateTime($serializedData['releaseDate']));
+        $category = $em->getRepository('AppBundle:Category')->findOneByName($serializedData['category']['name']);
+        $author = $em->getRepository('AppBundle:User')->findOneByFullname('system');
+        $show->setAuthor($author);
+        $show->setCategory($category);
+        $show->setMainPicture($serializedData['mainPicture']);
+        $show->setDataSource(Show::DATA_SOURCE_DB);
+
         $errors = $validator->validate($show);
 
         if ($errors->count() == 0) {
-            $em = $this->getDoctrine()->getManager();
             $em->persist($show);
             $em->flush();
 
@@ -106,21 +129,30 @@ class ShowController extends Controller
     {
         $data = [
             'error' => true,
-            'message' => 'Your category isn\'t valid'
+            'message' => 'Your show isn\'t valid'
         ];
         
-        $newCategory = $serializer->deserialize($request->getContent(), Category::class, 'json');
-        
-        $errors = $validator->validate($newCategory);
+        $em = $this->getDoctrine()->getManager();
+        $deserializationContext = DeserializationContext::create();
+        $serializedData = json_decode($request->getContent(), true);
+        $newShow = $serializer->deserialize($request->getContent(), Show::class, 'json');
+        $newShow->setReleaseDate(new \DateTime($serializedData['releaseDate']));
+        $category = $em->getRepository('AppBundle:Category')->findOneByName($serializedData['category']['name']);
+        $author = $em->getRepository('AppBundle:User')->findOneByFullname('system');
+        $newShow->setAuthor($author);
+        $newShow->setCategory($category);
+        $newShow->setMainPicture($serializedData['mainPicture']);
+        $newShow->setDataSource(Show::DATA_SOURCE_DB);
+        $errors = $validator->validate($newShow);
 
         if ($errors->count() == 0) {
             $em = $this->getDoctrine()->getManager();
-            $category->update($newCategory);
+            $show->update($newShow);
             
             $em->flush();
 
             $data['error'] = false;
-            $data['message'] = 'your category has been successfully updated';
+            $data['message'] = 'your show has been successfully updated';
 
             $json = $serializer->serialize($data, 'json');
 

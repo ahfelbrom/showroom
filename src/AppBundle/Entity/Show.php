@@ -93,12 +93,13 @@ class Show
     private $releaseDate;
 
     /**
-     * @ORM\Column(name="main_picture", type="string", length=50)
+     * @ORM\Column(name="main_picture", type="string", length=100)
      * 
      * @Assert\NotBlank(message="Please upload a picture for the show", groups={"create"})
      * @Assert\Image(
      * minHeight=300,
-     * minWidth=750
+     * minWidth=750,
+     * groups={"create"}
      * )
      */
     private $mainPicture;
@@ -254,5 +255,20 @@ class Show
     public function getDataSource()
     {
         return $this->dataSource;
+    }
+
+    public function update($show)
+    {
+        $this
+            ->setName($show->getName())
+            ->setAbstract($show->getAbstract())
+            ->setCountry($show->getCountry())
+            ->setAuthor($show->getAuthor())
+            ->setCategory($show->getCategory())
+            ->setReleaseDate($show->getReleaseDate())
+            ->setDataSource($show->getDataSource())
+            ->setMainPicture($show->getMainPicture());
+
+        return $this;
     }
 }
