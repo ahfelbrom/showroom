@@ -5,8 +5,10 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Entity\Category;
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +24,15 @@ class CategoryController extends Controller
     /**
      * @Route("/categories", name="list")
      * @Method({"GET"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns the rewards of an user",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @Model(type=Category::class, groups={"full"})
+     *     )
+     * )
      */
     public function listAction(SerializerInterface $serializer)
     {
