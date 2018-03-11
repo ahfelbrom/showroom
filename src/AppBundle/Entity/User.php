@@ -4,21 +4,10 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
-// ----------------------------------------------------------------------------
-
-use Symfony\Component\Security\Core\User\UserInterface;
-
-// ----------------------------------------------------------------------------
-
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
-// -----------------------------------------------------------------------------
-
 use JMS\Serializer\Annotation as JMS;
-
-// -----------------------------------------------------------------------------
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -190,6 +179,10 @@ class User implements UserInterface
 
     public function update($user)
     {
+        if ($user->getUsername() != null)
+        {
+            $this>setUsername($user->getUsername());
+        }
         $this
             ->setFullname($user->getFullname())
             ->setRoles($user->getRoles())

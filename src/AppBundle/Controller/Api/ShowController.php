@@ -2,28 +2,17 @@
 
 namespace AppBundle\Controller\Api;
 
+use AppBundle\Entity\Show;
+use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\DeserializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-//------------------------------------------------------------------------------
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
-//------------------------------------------------------------------------------
-
-use JMS\Serializer\SerializerInterface;
-use JMS\Serializer\SerializationContext;
-use JMS\Serializer\DeserializationContext;
-
-//------------------------------------------------------------------------------
-
-use AppBundle\Entity\Show;
-
-//------------------------------------------------------------------------------
 
 
 /**
@@ -70,9 +59,7 @@ class ShowController extends Controller
     {
 /*
 {
-    "category": {
-        "name": "science-fiction"
-    },
+    "categoryName": "science-fiction"
     "name": "Doctor who",
     "abstract": "The best show of the universe concerning the sci-fi category",
     "country": "US",
@@ -91,7 +78,7 @@ class ShowController extends Controller
         $serializedData = json_decode($request->getContent(), true);
         $show = $serializer->deserialize($request->getContent(), Show::class, 'json');
         $show->setReleaseDate(new \DateTime($serializedData['releaseDate']));
-        $category = $em->getRepository('AppBundle:Category')->findOneByName($serializedData['category']['name']);
+        $category = $em->getRepository('AppBundle:Category')->findOneByName($serializedData['categoryName']);
         $author = $em->getRepository('AppBundle:User')->findOneByFullname('system');
         $show->setAuthor($author);
         $show->setCategory($category);

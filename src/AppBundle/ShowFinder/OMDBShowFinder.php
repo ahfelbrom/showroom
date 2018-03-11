@@ -2,19 +2,11 @@
 
 namespace AppBundle\ShowFinder;
 
-use GuzzleHttp\Client;
-
-//------------------------------------------------------------------------------
-
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-
-//------------------------------------------------------------------------------
-
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Show;
 use AppBundle\Entity\User;
-
-//------------------------------------------------------------------------------
+use GuzzleHttp\Client;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 
 class OMDBShowFinder implements ShowFinderInterface
