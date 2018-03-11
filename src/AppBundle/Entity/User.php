@@ -187,4 +187,14 @@ class User implements UserInterface
     {
         return $this->shows;
     }
+
+    public function update($user)
+    {
+        $this
+            ->setFullname($user->getFullname())
+            ->setRoles($user->getRoles())
+            ->setPassword($user->getPassword());
+
+        return $this;
+    }
 }

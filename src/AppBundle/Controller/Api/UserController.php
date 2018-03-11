@@ -105,4 +105,88 @@ class UserController extends Controller
             'Content-Type' => 'application\json'
         ));
     }
+
+    /**
+     * @Route("/users/{id}", name="put")
+     * @Method({"PUT"})
+     */
+    public function putAction(User $user, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EncoderFactoryInterface $encoderFactory)
+    {
+        $data = [
+            'error' => true,
+            'message' => 'Your user isn\'t valid'
+        ];
+        
+        $em = $this->getDoctrine()->getManager();
+        $deserializationContext = DeserializationContext::create();
+        // $serializedData = json_decode($request->getContent(), true);
+        $newUser = $serializer->deserialize($request->getContent(), User::class, 'json');
+
+        $encoder = $encoderFactory->getEncoder($user);
+        $hashedPassword = $encoder->encodePassword($user->getPassword(), null);
+
+        $newUser->setPassword($hashedPassword);
+        if ($user->getUsername() == $newUser->getUsername())
+        {
+            $newUser->setUsername(null);
+        }
+
+        $errors = $validator->validate($newUser);
+
+        if ($errors->count() == 0) {
+            $em = $this->getDoctrine()->getManager();
+            $user->update($newUser);
+            
+            $em->flush();
+
+            $data['error'] = false;
+            $data['message'] = 'your user has been successfully updated';
+
+            $json = $serializer->serialize($data, 'json');
+
+            return new Response($json, Response::HTTP_OK, array(
+                'Content-Type' => 'application\json'
+            ));
+        }
+        $data['explication'] = $errors;
+        $json = $serializer->serialize($data, 'json');
+
+        return new Response($json, Response::HTTP_BAD_REQUEST, array(
+            'Content-Type' => 'application\json'
+        ));
+    }
+
+    /**
+     * @Route("/users/{id}", name="delete")
+     * @Method({"DELETE"})
+     */
+    public function deleteAction(Request $request, SerializerInterface $serializer)
+    {
+        $data = [
+            'error' => true,
+            'message' => 'The user hasn\'t been found'
+        ];
+        $em = $this->getDoctrine()->getManager();
+
+        $user = $em->getRepository('AppBundle:User')->findOneById($request->get('id'));
+
+        if ($user != null) {
+            $em->remove($user);
+            $em->flush();
+
+            $data['error'] = false;
+            $data['message'] = 'your user has been successfully deleted';
+
+            $json = $serializer->serialize($data, 'json');
+
+            return new Response($json, Response::HTTP_OK, array(
+                'Content-Type' => 'application\json'
+            ));
+        }
+        $json = $serializer->serialize($data, 'json');
+
+        return new Response($json, Response::HTTP_NOT_FOUND, array(
+            'Content-Type' => 'application\json'
+        ));
+    }
 }
