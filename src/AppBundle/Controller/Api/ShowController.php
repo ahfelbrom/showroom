@@ -6,8 +6,10 @@ use AppBundle\Entity\Show;
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\DeserializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +25,11 @@ class ShowController extends Controller
     /**
      * @Route("/shows", name="list")
      * @Method({"GET"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return All the shows of the database",
+     * )
      */
     public function listAction(SerializerInterface $serializer)
     {
@@ -40,6 +47,21 @@ class ShowController extends Controller
     /**
      * @Route("/shows/{id}", name="details")
      * @Method({"GET"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return the json of the show found",
+     * )
+     * @SWG\Response(
+     *     response=404,
+     *     description="The message sent if the show isn't found",
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="The id of the show"
+     * )
      */
     public function detailsAction(SerializerInterface $serializer, Show $show)
     {
@@ -54,20 +76,28 @@ class ShowController extends Controller
     /**
      * @Route("/shows", name="post")
      * @Method({"POST"})
+     *
+     * @SWG\Response(
+     *     response=201,
+     *     description="Return The message that confirms the creation of the show",
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Return The message that shows your errors in your request",
+     * )
+     * @SWG\Parameter(
+     *     name="show",
+     *     in="body",
+     *     type="Show",
+     *     description="The show to persist in database",
+     *     @SWG\Schema(
+     *         type="object",
+     *         @Model(type=Show::class, groups={"show"})
+     *     )
+     * )
      */
     public function postAction(Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
-    {
-/*
-{
-    "categoryName": "science-fiction"
-    "name": "Doctor who",
-    "abstract": "The best show of the universe concerning the sci-fi category",
-    "country": "US",
-    "releaseDate": "2018-03-10",
-    "mainPicture": "https://vl-media.fr/wp-content/uploads/2017/12/matt-smith.jpg",
-    "dataSource": "API"
-}
-*/        
+    {     
         $data = [
             'error' => true,
             'message' => 'Your show isn\'t valid'
@@ -111,6 +141,31 @@ class ShowController extends Controller
     /**
      * @Route("/shows/{id}", name="put")
      * @Method({"PUT"})
+     *
+     * @SWG\Response(
+     *     response=201,
+     *     description="Return The message that confirms the update of the show",
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Return The message that shows your errors in your request",
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="string",
+     *     description="The id of the show to update"
+     * )
+     * @SWG\Parameter(
+     *     name="category",
+     *     in="body",
+     *     type="Show",
+     *     description="The changes of the show to update",
+     *     @SWG\Schema(
+     *         type="object",
+     *         @Model(type=Show::class, groups={"full"})
+     *     )
+     * )
      */
     public function putAction(Show $show, Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -158,6 +213,21 @@ class ShowController extends Controller
     /**
      * @Route("/shows/{id}", name="delete")
      * @Method({"DELETE"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return The message that confirms the deletion of the show",
+     * )
+     * @SWG\Response(
+     *     response=404,
+     *     description="Return The message if the show hasn't been found",
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="string",
+     *     description="The id of the show to delete"
+     * )
      */
     public function deleteAction(Request $request, SerializerInterface $serializer)
     {

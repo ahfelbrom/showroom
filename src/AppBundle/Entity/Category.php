@@ -22,6 +22,9 @@ class Category
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"full"})
      */
     protected $id;
 
@@ -35,6 +38,7 @@ class Category
      * )
      *
      * @JMS\Expose
+     * @JMS\Groups({"full"})
      */
     private $name;
 

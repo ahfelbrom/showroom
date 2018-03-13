@@ -27,11 +27,7 @@ class CategoryController extends Controller
      *
      * @SWG\Response(
      *     response=200,
-     *     description="Returns the rewards of an user",
-     *     @SWG\Schema(
-     *         type="array",
-     *         @Model(type=Category::class, groups={"full"})
-     *     )
+     *     description="Returns the list of all the categories in database",
      * )
      */
     public function listAction(SerializerInterface $serializer)
@@ -49,6 +45,17 @@ class CategoryController extends Controller
     /**
      * @Route("/categories/{id}", name="details")
      * @Method({"GET"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns one category in Database",
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="The id of the category to show"
+     * )
      */
     public function detailsAction(SerializerInterface $serializer, Category $category)
     {
@@ -60,8 +67,44 @@ class CategoryController extends Controller
     }
 
     /**
+     * @Route("/categories/shows/{id}", name="find_all_shows")
+     * @Method({"GET"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns the list of all the shows bound to the category found",
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="The id of the category"
+     * )
+     */
+    public function findAllShowsAction(SerializerInterface $serializer, Category $category)
+    {
+        $shows = $this->getDoctrine()->getManager()->getRepository('AppBundle:Show')->findAllFromCategory($category->getId());
+
+        $data = $serializer->serialize($shows, 'json');
+
+        return new Response($data, Response::HTTP_OK, array(
+            'Content-Type' => 'application\json'
+        ));
+    }
+
+    /**
      * @Route("/categories", name="post")
      * @Method({"POST"})
+     *
+     * @SWG\Response(
+     *     response=201,
+     *     description="Return The message that confirms the creation of the category",
+     * )
+     *
+     * @SWG\Response(
+     *     response=400,
+     *     description="Return The message that says the errors of the request",
+     * )
      */
     public function postAction(Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -99,6 +142,31 @@ class CategoryController extends Controller
     /**
      * @Route("/categories/{id}", name="put")
      * @Method({"PUT"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return The message that confirms the update of the category",
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Return The message that shows your errors in your request",
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="The id of the category to update"
+     * )
+     * @SWG\Parameter(
+     *     name="category",
+     *     in="body",
+     *     type="Category",
+     *     description="The changes of the category to update",
+     *     @SWG\Schema(
+     *         type="object",
+     *         @Model(type=Category::class, groups={"full"})
+     *     )
+     * )
      */
     public function putAction(Category $category, Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -137,6 +205,21 @@ class CategoryController extends Controller
     /**
      * @Route("/categories/{id}", name="delete")
      * @Method({"DELETE"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return The message that confirms the update of the category",
+     * )
+     * @SWG\Response(
+     *     response=404,
+     *     description="The message if the category isn't found",
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="The id of the category to delete"
+     * )
      */
     public function deleteAction(Request $request, SerializerInterface $serializer)
     {
