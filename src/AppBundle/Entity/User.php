@@ -80,22 +80,12 @@ class User implements UserInterface
         $this->shows = new ArrayCollection();
     }
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
     public function setFullname($fullname)
     {
         $this->fullname = $fullname;
 
 
         return $this;
-    }
-
-    public function getFullname()
-    {
-        return $this->fullname;
     }
 
     public function addRole($role)
@@ -112,31 +102,11 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRoles()
-    {
-        return $this->roles;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
     public function setPassword($password)
     {
         $this->password = $password;
 
         return $this;
-    }
-
-    public function getSalt()
-    {
-
-    }
-
-    public function getUsername()
-    {
-        return $this->email;
     }
 
     public function setUsername($mail)
@@ -170,6 +140,36 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getFullname()
+    {
+        return $this->fullname;
+    }
+
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function getSalt()
+    {
+
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
     }
 
     public function getShows()

@@ -52,21 +52,16 @@ class Category
     {
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     public function setName($name)
     {
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getName()
