@@ -89,7 +89,7 @@ class UserController extends Controller
      *     description="The show to persist in database",
      *     @SWG\Schema(
      *         type="object",
-     *         @Model(type=User::class, groups={"user"})
+     *         @Model(type=AppBundle\Entity\User::class, groups={"user"})
      *     )
      * )
      */
@@ -157,7 +157,7 @@ class UserController extends Controller
      *     description="The user to update in database",
      *     @SWG\Schema(
      *         type="object",
-     *         @Model(type=User::class, groups={"user"})
+     *         @Model(type=AppBundle\Entity\User::class, groups={"user"})
      *     )
      * )
      */

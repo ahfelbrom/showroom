@@ -92,7 +92,7 @@ class ShowController extends Controller
      *     description="The show to persist in database",
      *     @SWG\Schema(
      *         type="object",
-     *         @Model(type=Show::class, groups={"show"})
+     *         @Model(type=AppBundle\Entity\Show::class, groups={"show"})
      *     )
      * )
      */
@@ -163,7 +163,7 @@ class ShowController extends Controller
      *     description="The changes of the show to update",
      *     @SWG\Schema(
      *         type="object",
-     *         @Model(type=Show::class, groups={"full"})
+     *         @Model(type=AppBundle\Entity\Show::class, groups={"full"})
      *     )
      * )
      */

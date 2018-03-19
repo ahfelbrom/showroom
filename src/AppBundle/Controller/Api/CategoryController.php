@@ -105,6 +105,16 @@ class CategoryController extends Controller
      *     response=400,
      *     description="Return The message that says the errors of the request",
      * )
+     * @SWG\Parameter(
+     *     name="category",
+     *     in="body",
+     *     type="Category",
+     *     description="The changes of the category to update",
+     *     @SWG\Schema(
+     *         type="object",
+     *         @Model(type=AppBundle\Entity\Category::class, groups={"full"})
+     *     )
+     * )
      */
     public function postAction(Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -164,7 +174,7 @@ class CategoryController extends Controller
      *     description="The changes of the category to update",
      *     @SWG\Schema(
      *         type="object",
-     *         @Model(type=Category::class, groups={"full"})
+     *         @Model(type=AppBundle\Entity\Category::class, groups={"full"})
      *     )
      * )
      */
