@@ -3,17 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
-
-// -----------------------------------------------------------------------------
-
-use Symfony\Component\Validator\Constraints as Assert;
-
-// -----------------------------------------------------------------------------
-
 use JMS\Serializer\Annotation as JMS;
-
-// -----------------------------------------------------------------------------
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -93,12 +84,13 @@ class Show
     private $releaseDate;
 
     /**
-     * @ORM\Column(name="main_picture", type="string", length=50)
+     * @ORM\Column(name="main_picture", type="string", length=100)
      * 
      * @Assert\NotBlank(message="Please upload a picture for the show", groups={"create"})
      * @Assert\Image(
      * minHeight=300,
-     * minWidth=750
+     * minWidth=750,
+     * groups={"create"}
      * )
      */
     private $mainPicture;
@@ -121,23 +113,8 @@ class Show
     private $dataSource;
 
 
-    /**
-     *
-     * Constructor of the Document entity
-     *
-     */
     public function __construct()
     {
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     public function setName($name)
@@ -147,21 +124,11 @@ class Show
         return $this;
     }
 
-    public function getName()
-    {
-        return $this->name;
-    }
-
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
 
         return $this;
-    }
-
-    public function getAbstract()
-    {
-        return $this->abstract;
     }
 
     public function setCountry($country)
@@ -170,23 +137,12 @@ class Show
 
         return $this;
     }
-    
-    public function getCountry()
-    {
-        return $this->country;
-    }
 
-    
     public function setAuthor(User $author)
     {
         $this->author = $author;
 
         return $this;
-    }
-
-    public function getAuthor()
-    {
-        return $this->author;
     }
 
     public function setReleaseDate(\DateTime $releaseDate)
@@ -196,21 +152,11 @@ class Show
         return $this;
     }
 
-    public function getReleaseDate()
-    {
-        return $this->releaseDate;
-    }
-
     public function setMainPicture($mainPicture)
     {
         $this->mainPicture = $mainPicture;
 
         return $this;
-    }
-
-    public function getMainPicture()
-    {
-        return $this->mainPicture;
     }
 
     public function setTmpPicture($tmpPicture)
@@ -220,11 +166,6 @@ class Show
         return $this;
     }
 
-    public function getTmpPicture()
-    {
-        return $this->tmpPicture;
-    }
-
     public function setCategory(Category $category)
     {
         $this->category = $category;
@@ -232,9 +173,11 @@ class Show
         return $this;
     }
 
-    public function getCategory()
+    public function removeCategory()
     {
-        return $this->category;
+        $this->category = null;
+
+        return $this;
     }
 
     public function setDataSource($dataSource)
@@ -244,8 +187,68 @@ class Show
         return $this;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getAbstract()
+    {
+        return $this->abstract;
+    }
+
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    public function getReleaseDate()
+    {
+        return $this->releaseDate;
+    }
+
+    public function getMainPicture()
+    {
+        return $this->mainPicture;
+    }
+
+    public function getTmpPicture()
+    {
+        return $this->tmpPicture;
+    }
+
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
     public function getDataSource()
     {
         return $this->dataSource;
+    }
+
+    public function update($show)
+    {
+        $this
+            ->setName($show->getName())
+            ->setAbstract($show->getAbstract())
+            ->setCountry($show->getCountry())
+            ->setAuthor($show->getAuthor())
+            ->setCategory($show->getCategory())
+            ->setReleaseDate($show->getReleaseDate())
+            ->setDataSource($show->getDataSource())
+            ->setMainPicture($show->getMainPicture());
+
+        return $this;
     }
 }

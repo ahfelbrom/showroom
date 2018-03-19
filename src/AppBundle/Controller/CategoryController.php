@@ -2,16 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Category;
+use AppBundle\Form\Type\CategoryType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-
-//------------------------------------------------------------------------------
-
-use AppBundle\Entity\Category;
-use AppBundle\Form\Type\CategoryType;
-
-//------------------------------------------------------------------------------
 
 
 /**
@@ -54,7 +49,7 @@ class CategoryController extends Controller
 
             $this->addFlash('success', 'La catégorie a bien été enregistrée');
 
-            return $this->redirectToRoute('category_list');
+            return $this->redirectToRoute('show_list');
         }
 
         return $this->render('category/create.html.twig', array(

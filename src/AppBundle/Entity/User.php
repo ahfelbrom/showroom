@@ -4,21 +4,10 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
-// ----------------------------------------------------------------------------
-
-use Symfony\Component\Security\Core\User\UserInterface;
-
-// ----------------------------------------------------------------------------
-
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
-// -----------------------------------------------------------------------------
-
 use JMS\Serializer\Annotation as JMS;
-
-// -----------------------------------------------------------------------------
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -91,22 +80,12 @@ class User implements UserInterface
         $this->shows = new ArrayCollection();
     }
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
     public function setFullname($fullname)
     {
         $this->fullname = $fullname;
 
 
         return $this;
-    }
-
-    public function getFullname()
-    {
-        return $this->fullname;
     }
 
     public function addRole($role)
@@ -123,31 +102,11 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRoles()
-    {
-        return $this->roles;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
     public function setPassword($password)
     {
         $this->password = $password;
 
         return $this;
-    }
-
-    public function getSalt()
-    {
-
-    }
-
-    public function getUsername()
-    {
-        return $this->email;
     }
 
     public function setUsername($mail)
@@ -183,8 +142,52 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getFullname()
+    {
+        return $this->fullname;
+    }
+
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function getSalt()
+    {
+
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
     public function getShows()
     {
         return $this->shows;
+    }
+
+    public function update($user)
+    {
+        if ($user->getUsername() != null)
+        {
+            $this>setUsername($user->getUsername());
+        }
+        $this
+            ->setFullname($user->getFullname())
+            ->setRoles($user->getRoles())
+            ->setPassword($user->getPassword());
+
+        return $this;
     }
 }

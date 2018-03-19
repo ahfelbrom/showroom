@@ -3,18 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
-
-// -----------------------------------------------------------------------------
-
+use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
-// -----------------------------------------------------------------------------
-
-use JMS\Serializer\Annotation as JMS;
-
-// -----------------------------------------------------------------------------
 
 
 /**
@@ -31,6 +22,9 @@ class Category
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @JMS\Expose
+     * @JMS\Groups({"full"})
      */
     protected $id;
 
@@ -44,6 +38,7 @@ class Category
      * )
      *
      * @JMS\Expose
+     * @JMS\Groups({"full"})
      */
     private $name;
 
@@ -57,21 +52,16 @@ class Category
     {
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     public function setName($name)
     {
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getName()
