@@ -33,6 +33,8 @@ class ShowController extends Controller
      */
     public function listAction(SerializerInterface $serializer)
     {
+        throw new \Exception("Error Processing Request", 1);
+
         $em = $this->getDoctrine()->getManager();
         $shows = $em->getRepository('AppBundle:Show')->findAll();
         
@@ -105,15 +107,7 @@ class ShowController extends Controller
         
         $em = $this->getDoctrine()->getManager();
         $deserializationContext = DeserializationContext::create();
-        $serializedData = json_decode($request->getContent(), true);
         $show = $serializer->deserialize($request->getContent(), Show::class, 'json');
-        $show->setReleaseDate(new \DateTime($serializedData['releaseDate']));
-        $category = $em->getRepository('AppBundle:Category')->findOneByName($serializedData['categoryName']);
-        $author = $em->getRepository('AppBundle:User')->findOneByFullname('system');
-        $show->setAuthor($author);
-        $show->setCategory($category);
-        $show->setMainPicture($serializedData['mainPicture']);
-        $show->setDataSource(Show::DATA_SOURCE_DB);
 
         $errors = $validator->validate($show);
 

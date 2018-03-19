@@ -27,8 +27,6 @@ class ShowController extends Controller
      */
     public function listAction(Request $request, ShowFinder $showFinder)
     {
-        throw new \Exception("Error Processing Request", 1);
-        
         $showRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Show');
         $session = $request->getSession();
         
