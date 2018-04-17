@@ -1,4 +1,5 @@
 <?php
+
 namespace AppBundle\Serializer\Handler;
 
 use AppBundle\Entity\Show;
@@ -8,53 +9,53 @@ use JMS\Serializer\JsonDeserializationVisitor;
 use JMS\Serializer\Handler\SubscribingHandlerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-
 class ShowHandler implements SubscribingHandlerInterface
 {
-    private $doctrine;
-    private $tokenStorage;
+	private $doctrine;
 
-    public function __construct(ManagerRegistry $doctrine, TokenStorageInterface $tokenStorage)
-    {
-        $this->doctrine = $doctrine;
-        $this->tokenStorage = $tokenStorage;
-    }
+	private $tokenStorage;
 
-    public static function getSubscribingMethods()
-    {
-        return [
-            [
-                'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
-                'format' => 'json',
-                'type' => 'AppBundle\Entity\Show',
-                'method' => 'deserialize'
-            ]
-        ];
-    }
-    public function deserialize(JsonDeserializationVisitor $visitor, $data)
-    {
-        $em = $this->doctrine->getManager();
-        $show = new Show();
-        $show
-            ->setName($data['name'])
-            ->setAbstract($data['abstract'])
-            ->setCountry($data['country'])
-            ->setReleaseDate(new \DateTime($data['release_date']))
-            ->setMainPicture($data['main_picture'])
-            ->setDataSource(Show::DATA_SOURCE_DB);
+	public function __construct(ManagerRegistry $doctrine, TokenStorageInterface $tokenStorage)
+	{
+		$this->doctrine = $doctrine;
+		$this->tokenStorage = $tokenStorage;
+	}
 
-        $em = $this->doctrine->getManager();
 
-        if (!$category = $em->getRepository('AppBundle:Category')->findOneByName($data['category']['name']))
-        {
-            throw new \LogicException("The category doesn't exists");
-        }
+	public static function getSubscribingMethods()
+	{
+		return [
+			[
+				'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
+				'format' => 'json',
+				'type' => 'AppBundle\Entity\Show',
+				'method' => 'deserialize'
+			]
+		];
+	}
 
-        $show->setCategory($category);
+	public function deserialize(JsonDeserializationVisitor $visitor, $data)
+	{
+    	$show = new Show();
+    	$show
+    	   ->setName($data['name'])
+    	   ->setAbstract($data['abstract'])
+    	   ->setCountry($data['country'])
+    	   ->setReleaseDate(new \Datetime($data['release_date']))
+    	   ->setMainPicture($data['main_picture'])
+    	;
 
-        $user = $this->tokenStorage->getToken()->getUser();
-        $show->setAuthor($user);
+    	$em = $this->doctrine->getManager();
 
-        return $show;
-    }
+    	if (!$category = $em->getRepository('AppBundle:Category')->findOneById($data['category']['id'])) {
+    		throw new \LogicException('The Category does not exist');
+    	}
+
+    	$show->setCategory($category);
+
+    	$user = $this->tokenStorage->getToken()->getUser();
+    	$show->setAuthor($user);
+
+		return $show;
+	}
 }

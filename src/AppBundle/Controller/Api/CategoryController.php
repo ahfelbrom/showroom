@@ -3,268 +3,100 @@
 namespace AppBundle\Controller\Api;
 
 use AppBundle\Entity\Category;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use JMS\Serializer\SerializerInterface;
-use JMS\Serializer\SerializationContext;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Swagger\Annotations as SWG;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 
 /**
  * @Route(name="api_category_")
  */
 class CategoryController extends Controller
 {
-    /**
-     * @Route("/categories", name="list")
-     * @Method({"GET"})
-     *
-     * @SWG\Response(
-     *     response=200,
-     *     description="Returns the list of all the categories in database",
-     * )
-     */
-    public function listAction(SerializerInterface $serializer)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $categories = $em->getRepository('AppBundle:Category')->findAll();
-        
-        $data = $serializer->serialize($categories, 'json');
+	/**
+	 * @Method({"GET"})
+	 * @Route("/categories", name="list")
+	 */
+	public function listAction(SerializerInterface $serializer)
+	{
+		$categories = $this->getDoctrine()->getRepository('AppBundle:Category')->findAll();
 
-        return new Response($data, Response::HTTP_OK, array(
-            'Content-Type' => 'application\json'
-        ));
-    }
+		return $this->returnResponse($serializer->serialize($categories, 'json'), Response::HTTP_OK);
+	}
 
-    /**
-     * @Route("/categories/{id}", name="details")
-     * @Method({"GET"})
-     *
-     * @SWG\Response(
-     *     response=200,
-     *     description="Returns one category in Database",
-     * )
-     * @SWG\Parameter(
-     *     name="id",
-     *     in="path",
-     *     type="integer",
-     *     description="The id of the category to show"
-     * )
-     */
-    public function detailsAction(SerializerInterface $serializer, Category $category)
-    {
-        $data = $serializer->serialize($category, 'json');
+	/**
+	 * @Method({"GET"})
+	 * @Route("/categories/{id}", name="get")
+	 */
+	public function getAction(Category $category, SerializerInterface $serializer)
+	{
+		return $this->returnResponse($serializer->serialize($category, 'json'), Response::HTTP_OK);
+	}
 
-        return new Response($data, Response::HTTP_OK, array(
-            'Content-Type' => 'application\json'
-        ));
-    }
+	/**
+	 * @Method({"POST"})
+	 * @Route("/categories", name="create")
+	 */
+	public function createAction(Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
+	{
+		$category = $serializer->deserialize($request->getContent(), Category::class, 'json');
 
-    /**
-     * @Route("/categories/shows/{id}", name="find_all_shows")
-     * @Method({"GET"})
-     *
-     * @SWG\Response(
-     *     response=200,
-     *     description="Returns the list of all the shows bound to the category found",
-     * )
-     * @SWG\Parameter(
-     *     name="id",
-     *     in="path",
-     *     type="integer",
-     *     description="The id of the category"
-     * )
-     */
-    public function findAllShowsAction(SerializerInterface $serializer, Category $category)
-    {
-        $shows = $this->getDoctrine()->getManager()->getRepository('AppBundle:Show')->findAllFromCategory($category->getId());
+		$constraintViolationList = $validator->validate($category);
 
-        $data = $serializer->serialize($shows, 'json');
+		if ($constraintViolationList->count() == 0) {
+			$em = $this->getDoctrine()->getManager();
 
-        return new Response($data, Response::HTTP_OK, array(
-            'Content-Type' => 'application\json'
-        ));
-    }
+			$em->persist($category);
+			$em->flush();
 
-    /**
-     * @Route("/categories", name="post")
-     * @Method({"POST"})
-     *
-     * @SWG\Response(
-     *     response=201,
-     *     description="Return The message that confirms the creation of the category",
-     * )
-     *
-     * @SWG\Response(
-     *     response=400,
-     *     description="Return The message that says the errors of the request",
-     * )
-     * @SWG\Parameter(
-     *     name="category",
-     *     in="body",
-     *     type="Category",
-     *     description="The changes of the category to update",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @Model(type=AppBundle\Entity\Category::class, groups={"full"})
-     *     )
-     * )
-     */
-    public function postAction(Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
-    {
-        $data = [
-            'error' => true,
-            'message' => 'Your category isn\'t valid'
-        ];
-        
-        $category = $serializer->deserialize($request->getContent(), Category::class, 'json');
-        
-        $errors = $validator->validate($category);
+			return $this->returnResponse('Category created', Response::HTTP_CREATED);
+		}
 
-        if ($errors->count() == 0) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($category);
-            $em->flush();
+		return $this->returnResponse($serializer->serialize($constraintViolationList, 'json'), Response::HTTP_BAD_REQUEST);
+	}
 
-            $data['error'] = false;
-            $data['message'] = 'your category has been successfully added';
-
-            $json = $serializer->serialize($data, 'json');
-
-            return new Response($json, Response::HTTP_CREATED, array(
-                'Content-Type' => 'application\json'
-            ));
-        }
-        $data['explication'] = $errors;
-        $json = $serializer->serialize($data, 'json');
-
-        return new Response($json, Response::HTTP_BAD_REQUEST, array(
-            'Content-Type' => 'application\json'
-        ));
-    }
-
-    /**
-     * @Route("/categories/{id}", name="put")
-     * @Method({"PUT"})
-     *
-     * @SWG\Response(
-     *     response=200,
-     *     description="Return The message that confirms the update of the category",
-     * )
-     * @SWG\Response(
-     *     response=400,
-     *     description="Return The message that shows your errors in your request",
-     * )
-     * @SWG\Parameter(
-     *     name="id",
-     *     in="path",
-     *     type="integer",
-     *     description="The id of the category to update"
-     * )
-     * @SWG\Parameter(
-     *     name="category",
-     *     in="body",
-     *     type="Category",
-     *     description="The changes of the category to update",
-     *     @SWG\Schema(
-     *         type="object",
-     *         @Model(type=AppBundle\Entity\Category::class, groups={"full"})
-     *     )
-     * )
-     */
-    public function putAction(Category $category, Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
-    {
-        $data = [
-            'error' => true,
-            'message' => 'Your category isn\'t valid'
-        ];
-        
+	/**
+	 * Update a category.
+	 *
+	 * @Method({"PUT"})
+	 * @Route("/categories/{id}", name="update")
+	 */
+	public function updateAction(Category $category, Request $request, SerializerInterface $serializer, ValidatorInterface $validator)
+	{
         $newCategory = $serializer->deserialize($request->getContent(), Category::class, 'json');
-        
-        $errors = $validator->validate($newCategory);
+        $constraintViolationList = $validator->validate($newCategory);
 
-        if ($errors->count() == 0) {
-            $em = $this->getDoctrine()->getManager();
-            $category->update($newCategory);
-            
-            $em->flush();
+        if ($constraintViolationList->count() == 0) {
+        	$category->update($newCategory);
+			$this->getDoctrine()->getManager()->flush();
 
-            $data['error'] = false;
-            $data['message'] = 'your category has been successfully updated';
+			return $this->returnResponse('Category updated', Response::HTTP_OK);
+		}
 
-            $json = $serializer->serialize($data, 'json');
+		return $this->returnResponse($serializer->serialize($constraintViolationList, 'json'), Response::HTTP_BAD_REQUEST);
+	}
 
-            return new Response($json, Response::HTTP_OK, array(
-                'Content-Type' => 'application\json'
-            ));
-        }
-        $data['explication'] = $errors;
-        $json = $serializer->serialize($data, 'json');
+	/**
+	 * Delete a category.
+	 *
+	 * @Method({"DELETE"})
+	 * @Route("/categories/{id}", name="delete")
+	 */
+	public function deleteACtion(Category $category)
+	{
+		$em = $this->getDoctrine()->getManager();
+		$em->remove($category);
 
-        return new Response($json, Response::HTTP_BAD_REQUEST, array(
-            'Content-Type' => 'application\json'
-        ));
-    }
+		try {
+			$em->flush();
+		} catch(ForeignKeyConstraintViolationException $e) {
 
-    /**
-     * @Route("/categories/{id}", name="delete")
-     * @Method({"DELETE"})
-     *
-     * @SWG\Response(
-     *     response=200,
-     *     description="Return The message that confirms the update of the category",
-     * )
-     * @SWG\Response(
-     *     response=404,
-     *     description="The message if the category isn't found",
-     * )
-     * @SWG\Parameter(
-     *     name="id",
-     *     in="path",
-     *     type="integer",
-     *     description="The id of the category to delete"
-     * )
-     */
-    public function deleteAction(Request $request, SerializerInterface $serializer)
-    {
-        $data = [
-            'error' => true,
-            'message' => 'The id for the category is not valid'
-        ];
-        $em = $this->getDoctrine()->getManager();
+			return $this->returnResponse(sprintf('This category ("%s") is attached to at least one show. Make sure that this category is not attached to any show before deleting it.', $category->getName()), Response::HTTP_BAD_REQUEST);
+		}
 
-        $category = $em->getRepository('AppBundle:Category')->findOneById($request->get('id'));
-
-        if ($category != null) {
-            $shows = $em->getRepository('AppBundle:Show')->findAllFromCategory($category->getId());
-            if ($shows != null)
-            {
-                foreach ($shows as $show) {
-                    $show->removeCategory();
-                }
-            }
-            $em->remove($category);
-            $em->flush();
-
-            $data['error'] = false;
-            $data['message'] = 'your category has been successfully deleted';
-
-            $json = $serializer->serialize($data, 'json');
-
-            return new Response($json, Response::HTTP_OK, array(
-                'Content-Type' => 'application\json'
-            ));
-        }
-        $json = $serializer->serialize($data, 'json');
-
-        return new Response($json, Response::HTTP_NOT_FOUND, array(
-            'Content-Type' => 'application\json'
-        ));
-    }
+		return $this->returnResponse('', Response::HTTP_NO_CONTENT);
+	}
 }

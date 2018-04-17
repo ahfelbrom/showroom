@@ -1,48 +1,60 @@
 {% extends "show/base.html.twig" %}
 
+{% block pageHeading %}
+   List of shows
+{% endblock %}
+
 {% block content %}
-    {% for show in shows %}
-        {% set img = '' %}
-        <!-- Blog Post -->
-        <div class="card mb-4">
-            {% if show.getDataSource() == constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
-                {% set img = asset('upload/' ~ show.getMainPicture()) %}
-            {% else %}
-                {% set img = show.getMainPicture() %}
-            {% endif %}
-            <img class="card-img-top" src="{{ img }}" alt="Main picture">
-            <div class="card-body">
-                {% if show.getDataSource() != constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
-                    <span class="badge badge-primary">{{ show.getDataSource() }}</span>
-                {% endif %}
-                <h2 class="card-title">{{ show.getName() }}</h2>
-                <p class="card-text">{{ show.getAbstract() }}</p>
-                {% if show.getDataSource() == constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
-                    {% if is_granted('NOT USED', show) %}
-                        <a href="{{ path('show_update', {'id': show.getId()}) }}" class="btn btn-primary">Update &rarr;</a>
-                        <form action="{{ path('show_delete') }}" method="POST">
-                            <input type="hidden" name="show_id" value="{{ show.getId() }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_show') }}">
-                            <button class="btn btn-danger" type="submit">delete X</button>
-                        </form>
-                    {% endif %}
-                {% endif %}
-            </div>
-            <div class="card-footer text-muted">
-                Posted on {{ show.getReleaseDate()|date('d/m/Y') }} by
-                <a href="#">{{ show.getAuthor().getFullname() }}</a>
-            </div>
-        </div>
-    {% else %}
-        <h2>No show to list :'(</h2>
-    {% endfor %}
-    <!-- Pagination -->
-    <ul class="pagination justify-content-center mb-4">
-        <li class="page-item">
-            <a class="page-link" href="#">&larr; Older</a>
-        </li>
-        <li class="page-item disabled">
-            <a class="page-link" href="#">Newer &rarr;</a>
-        </li>
-    </ul>
+  {% for show in shows %}
+  <div class="card mb-4">
+
+    {% set img = 'no image' %}
+    {% if show.dataSource == constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
+       {% set img = asset(upload_folder ~'/'~ show.mainPicture) %}
+    {% elseif show.dataSource == constant('AppBundle\\Entity\\Show::DATA_SOURCE_OMDB') %}
+       {% set img = show.mainPicture %}
+    {% endif %}
+
+    {% if img != 'N/A' %}
+    <img class="card-img-top" src="{{ img }}" alt="{{ show.name}}">
+    {% endif %}
+
+    <div class="card-body">
+      <h2 class="card-title">{{ show.Name }}</h2>
+      <p class="card-text">{{ show.abstract }}</p>
+
+      {% if show.dataSource == constant('AppBundle\\Entity\\Show::DATA_SOURCE_DB') %}
+
+        {% if is_granted('NOT USED', show) %}
+        <a href="{{ path('show_update', {'id': show.id}) }}" class="btn btn-primary">Update &rarr;</a>
+
+        <form action="{{ path('show_delete') }}" method="POST">
+          <input type="hidden" name="show_id" value="{{ show.id }}" />
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete_show') }}" />
+          <input type="hidden" name="_method" value="DELETE" />
+
+          <button type="submit" class="btn btn-danger">Delete x</button>
+        </form>
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="card-footer text-muted">
+      Posted on {{ show.releaseDate | date('d, M Y') }} by
+      <a href="#">{{ show.author.fullname }}</a>
+    </div>
+  </div>
+  {% else %}
+     Sorry there is no show to list :(
+  {% endfor %}
+
+  <!-- Pagination -->
+  <ul class="pagination justify-content-center mb-4">
+    <li class="page-item">
+      <a class="page-link" href="#">&larr; Older</a>
+    </li>
+    <li class="page-item disabled">
+      <a class="page-link" href="#">Newer &rarr;</a>
+    </li>
+  </ul>
+
 {% endblock %}

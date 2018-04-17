@@ -3,57 +3,45 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Category;
-use AppBundle\Form\Type\CategoryType;
+use AppBundle\Type\CategoryType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-
 
 /**
  * @Route("/category", name="category_")
  */
 class CategoryController extends Controller
 {
-    /**
-     * @Route("/", name="list")
-     *
-     */
-    public function listAction(Request $request)
+
+    public function categoriesAction()
     {
-        return $this->render('category/list.html.twig');
+        return $this->render('_includes/categories.html.twig', [
+               'categories' => $this->getDoctrine()->getRepository('AppBundle:Category')->findAll()
+        ]);
     }
 
     /**
-     * @Route("/create", name="create")
-     *
-     */
-    public function createAction(Request $request)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $category = new Category();
-        
-        $form = $this->createForm
-        (
-            CategoryType::class,
-            $category,
-            array
-            ()
-        );
+	 * @Route("/create", name="create")
+	 */
+	public function createAction(Request $request)
+	{
+		$category = new Category();
+		$form = $this->createForm(CategoryType::class, $category);
 
-        $form->handleRequest($request);
+		$form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid())
-        {
-            $em->persist($category);
-            $em->flush();
+		if ($form->isValid()) {
+			$em = $this->getDoctrine()->getManager();
 
-            $this->addFlash('success', 'La catégorie a bien été enregistrée');
+			$em->persist($category);
+			$em->flush();
 
-            return $this->redirectToRoute('show_list');
-        }
+			$this->addFlash('success', 'You successfully added a new category');
 
-        return $this->render('category/create.html.twig', array(
-            'form' => $form->createView()
-        ));
-    }
+			return $this->redirectToRoute('show_list');
+		}
+
+		return $this->render('category/create.html.twig', ['categoryForm' => $form->createView()]);
+	}
 }

@@ -7,7 +7,7 @@ imports:
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    upload_directory_file: '/upload'
+    upload_directory_file: /upload
 
 framework:
     #esi: ~
@@ -38,6 +38,8 @@ twig:
     strict_variables: '%kernel.debug%'
     form_themes:
         - bootstrap_3_layout.html.twig
+    globals:
+        upload_folder: '%upload_directory_file%'
 
 # Doctrine Configuration
 doctrine:
@@ -69,21 +71,13 @@ swiftmailer:
     password: '%mailer_password%'
     spool: { type: memory }
 
-doctrine_migrations:
-    dir_name: "%kernel.root_dir%/DoctrineMigrations"
-    namespace: Application\Migrations
-    table_name: migration_versions
-    name: Application Migrations
-    organize_migrations: false # Version >= 1.2, possible values are: "BY_YEAR", "BY_YEAR_AND_MONTH", false
-    custom_template: ~ # Version >= 1.2, path to your custom migrations template
-
 csa_guzzle:
     profiler: '%kernel.debug%'
     logger: true
     clients:
-        OMDB_api:
+        OMBD_api:
             config:
-                base_uri: http://www.omdbapi.com
+                base_uri: 'http://www.omdbapi.com'
 
 nelmio_api_doc:
     areas:

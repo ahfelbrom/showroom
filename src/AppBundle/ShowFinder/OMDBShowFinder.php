@@ -4,70 +4,75 @@ namespace AppBundle\ShowFinder;
 
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Show;
-use AppBundle\Entity\User;
 use GuzzleHttp\Client;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
-
 class OMDBShowFinder implements ShowFinderInterface
 {
-    private $client;
+	private $client;
 
-    private $apiKey;
+	private $tokenStorage;
 
-    private $tokenStorage;
+	private $apiKey;
 
-    public function __construct(Client $client, $apiKey, TokenStorage $tokenStorage)
-    {
-        $this->client = $client;
-        $this->apiKey = $apiKey;
-        $this->tokenStorage = $tokenStorage;
-    }
+	public function __construct(Client $client, TokenStorage $tokenStorage, $apiKey)
+	{
+		$this->client = $client;
+		$this->tokenStorage = $tokenStorage;
+		$this->apiKey = $apiKey;
+	}
 
-    public function findByName($query)
-    {
-        $response_shows = $this->client->get('/?apikey='.$this->apiKey.'&type=series&t="'.$query.'"');
-        $response_show_table = \GuzzleHttp\json_decode($response_shows->getBody(), true);
+	/**
+	 * Find a show by a string.
+	 *
+	 * @param String $query
+	 *
+	 * @return Array $shows
+	 */
+	public function findByName($query)
+	{
+		$results = $this->client->get('/?apikey='.$this->apiKey.'&type=series&t="'.$query.'"');
+		$json = \GuzzleHttp\json_decode($results->getBody(), true);
 
-        if ($response_show_table['Response'] == 'False' && $response_show_table['Error'] == 'Series not found!') {
-            return array();
-        }
-        return $this->convertToShow($response_show_table);
-    }
+		if ($json['Response'] == 'False' && $json['Error'] == 'Series not found!') {
+			return [];
+		}
 
-    /**
-     * Private function that converts a json to a show
-     *
-     * @param string $json : the json show
-     *
-     * @return Show $show
-     */
-    private function convertToShow($json)
-    {
-        $shows = [];
-        $category = new Category();
-        $category->setName($json['Genre']);
+		return $this->convertToShow($json);
+	}
 
-        $show = new Show();
-        $show
-            ->setName($json['Title'])
-            ->setCategory($category)
-            ->setAuthor($this->tokenStorage->getToken()->getUser())
-            ->setDataSource(Show::DATA_SOURCE_OMDB);
-        if ($json['Plot'] = "N/A")
-            $show->setAbstract("not provided");
-        else
-            $show->setAbstract($json['Plot']);
-        $show->setReleaseDate(new \DateTime($json['Released']))
-            ->setMainPicture($json['Poster']);
+	/**
+	 * Create a private function that transform a OMDB JSON into a Show and Category
+	 *
+	 * @param String $json
+	 *
+	 * Show[] $shows
+	 */ 
+	private function convertToShow($json)
+	{
+		$category = new Category();
+		$category->setName($json['Genre']);
 
-        $shows[] = $show;
+		$shows = [];
+		$show = new Show();
+		$show
+			->setName($json['Title'])
+			->setDataSource(Show::DATA_SOURCE_OMDB)
+			->setAbstract('Not provided.')
+			->setCountry($json['Country'])
+			->setAuthor($this->tokenStorage->getToken()->getUser())
+			->setReleaseDate(new \DateTime($json['Released']))
+			->setMainPicture($json['Poster'])
+			->setCategory($category)
+		;
 
-        return $shows;
-    }
+		$shows[] = $show;
 
-    public function getName()
-    {
-        return "IMDB client";
-    }
+		return $shows;
+	}
+
+	public function getName()
+	{
+		return 'IMDB API';
+	}
 }

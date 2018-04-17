@@ -2,24 +2,26 @@
 
 namespace AppBundle\ShowFinder;
 
-
 class ShowFinder
 {
-    private $finders;
-    
-    public function searchByName($query)
-    {
-        $founds = [];
+	private $finders;
 
-        foreach ($this->finders as $finder) {
-            $founds = array_merge($founds, $finder->findByName($query));
-        }
+	public function searchByName($query)
+	{
+		$results = [];
 
-        return $founds;
-    }
+		foreach ($this->finders as $finder) {
+			//$tmp[$finder->getName()] = $finder->findByName($query);
 
-    public function addFinder(ShowFinderInterface $finder)
-    {
-        $this->finders[] = $finder;
-    }
+			$results = array_merge($results, $finder->findByName($query));
+
+		}
+
+		return $results;
+	}
+
+	public function addFinder(ShowFinderInterface $finder)
+	{
+		$this->finders[] = $finder;
+	}
 }

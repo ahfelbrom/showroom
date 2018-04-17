@@ -3,71 +3,57 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
-use AppBundle\Form\Type\UserType;
+use AppBundle\Type\UserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-
 
 /**
  * @Route("/user", name="user_")
  */
 class UserController extends Controller
 {
-    /**
-     * @Route("/create", name="create")
-     *
-     */
-    public function createAction(Request $request, EncoderFactoryInterface $encoderFactory)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $user = new User();
-        
-        $form = $this->createForm
-        (
-            UserType::class,
-            $user,
-            array
-            ()
-        );
+	/**
+	 * @Route("/create", name="create")
+	 */
+	public function createAction(Request $request, EncoderFactoryInterface $encoderFactory)
+	{
+		$this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'You shall not paaaaaaaaass!');
 
-        $form->handleRequest($request);
+		$user = new User();
+		$userForm = $this->createForm(UserType::class, $user);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+		$userForm->handleRequest($request);
 
-            $encoder = $encoderFactory->getEncoder($user);
-            $hashedPassword = $encoder->encodePassword($user->getPassword(), null);
+        if ($userForm->isValid()) {
+        	$em = $this->getDoctrine()->getManager();
 
-            $user->setPassword($hashedPassword);
+        	$encoder = $encoderFactory->getEncoder($user);
+        	$hashedPassword = $encoder->encodePassword($user->getPassword(), null);
 
-            $em->persist($user);
-            $em->flush();
+        	$user->setPassword($hashedPassword);
 
-            $this->addFlash('success', 'The user has been created');
+        	$em->persist($user);
+        	$em->flush();
 
-            return $this->redirectToRoute('show_list');
+        	$this->addFlash('success', 'The user has been successfully added.');
+
+        	return $this->redirectToRoute('user_list');
         }
 
-        return $this->render("user/create.html.twig", array(
-            'form' => $form->createView()
-        ));
-    }
+		return $this->render('user/create.html.twig', ['userForm' => $userForm->createView()]);
+	}
 
     /**
-     * @Route("/", name="list")
-     *
+     * @Route("/list", name="list")
      */
-    public function listAction()
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
-        $em = $this->getDoctrine()->getManager();
-        $users = $em->getRepository('AppBundle:User')->findAll();
-
-        return $this->render("user/list.html.twig", array(
-            'users' => $users
-        ));
-    }
+	public function listAction()
+	{
+		$this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'You shall not paaaaaaaaass!');
+		
+		return $this->render('user/list.html.twig', [
+			'users' => $this->getDoctrine()->getRepository('AppBundle:User')->findAll()
+		]);
+	}
 }

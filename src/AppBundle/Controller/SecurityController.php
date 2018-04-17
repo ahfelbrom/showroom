@@ -4,41 +4,40 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 
+/**
+ * @Route(name="security_")
+ */
 class SecurityController extends Controller
 {
-    /**
-     * @Route("/login", name="app_login")
-     *
-     */
-    public function loginAction(AuthenticationUtils $utils)
-    {
-        $error = $utils->getLastAuthenticationError();
-        $lastUsername = $utils->getLastUsername();
-        return $this->render('security/login.html.twig', array(
-            'error' => $error,
-            'username' => $lastUsername
-        ));
-    }
+	/**
+	 * @Route("/login", name="login")
+	 */
+	public function loginAction(AuthenticationUtils $authUtils)
+	{
+		throw new \Exception('oh non');
+
+		return $this->render('security/login.html.twig', [
+			'error' => $authUtils->getLastAuthenticationError(),
+			'lastUsername' => $authUtils->getLastUsername()
+		]);
+	}
 
     /**
-     * @Route("/login_check", name="app_login_check")
-     *
+     * @Route("/login_check", name="login_check")
      */
-    public function loginCheckAction(AuthenticationUtils $utils)
-    {
-        dump('this code will never be red');
-    }
+	public function loginCheckAction()
+	{
+		dump('This code is never executed 🤩');
+	}
 
-    /**
-     * @Route("/logout", name="app_logout")
-     *
-     */
-    public function logoutAction(AuthenticationUtils $utils)
-    {
-        dump('this code will never be red');
-    }
+	/**
+	 * @Route("/logout", name="logout")
+	 */
+	public function logoutAction()
+	{
+		dump('This code is never executed 🤩');
+	}
 }

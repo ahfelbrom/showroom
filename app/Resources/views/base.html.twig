@@ -20,18 +20,11 @@
 
   <body>
     {% embed "_includes/menu.html.twig" %}
-      {% block menu_title %}
-        Showroom
-      {% endblock %}
+       {% block menu_title %}
+           Showroom
+       {% endblock %}
     {% endembed %}
 
-    {% for label, message in app.flashes %}
-    <div class="alert alert-{{ label}}" role="alert">
-      {% for mess in message %}
-        {{ mess }}
-      {% endfor %}
-    </div>
-    {% endfor %}
     <!-- Page Content -->
     <div class="container">
 
@@ -40,22 +33,18 @@
         <!-- Blog Entries Column -->
         <div class="col-md-8">
 
-          <h1 class="my-4">
-            {% block pageHeading %}
-              List of shows
-            {% endblock %}
-          </h1>
-          {% block content %}{% endblock %}
+          <h1 class="my-4">Welcome</h1>
+
+          {% block content%}{% endblock content %}
         </div>
       </div>
       <!-- /.row -->
     </div>
     <!-- /.container -->
-
     <!-- Footer -->
     <footer class="py-5 bg-dark">
       <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2017</p>
+        <p class="m-0 text-center text-white">Copyright &copy; Symfony course DIM 2018</p>
       </div>
       <!-- /.container -->
     </footer>

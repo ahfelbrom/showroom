@@ -3,27 +3,16 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
-
 
 class ShowRepository extends EntityRepository
 {
-    public function findAllByName($name)
+	public function findAllByQuery($query)
     {
         return $this->createQueryBuilder('s')
-            ->where('LOWER(s.name) LIKE :name')
-            ->setParameter('name', '%' . $name . '%')
+            ->where('LOWER(s.name) LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
             ->getQuery()
-            ->getResult();
-    }
-
-    public function findAllFromCategory($categoryId)
-    {
-    	return $this->createQueryBuilder('s')
-    		->join('s.category', 'c')
-            ->where('c.id = :categoryId')
-            ->setParameter('categoryId', $categoryId)
-            ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
     }
 }

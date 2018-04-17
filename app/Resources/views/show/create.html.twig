@@ -1,20 +1,35 @@
 {% extends "show/base.html.twig" %}
 
 {% block pageHeading %}
-    Create a show
+    {% if app.request.attributes.get('_route') == 'show_create' %}Create a show{% else %}Update "{{ show.name }}"{% endif %}
 {% endblock %}
 
 {% block content %}
 
-    {{ form_start(form, {'attr': {'id': 'form-show', 'novalidate':"novalidate"}}) }} {# novalidate pour empêcher la validation par html5 #}
-    {# {{ form_widget(form) }} #}
+    {#{{ form(showForm) }}#}
 
-    {# {{ form_row(form.name) }} #}
-    {{ form_label(form.name) }}
-    {{ form_widget(form.name) }}
-    {{ form_errors(form.name) }}
-    {{ form_rest(form) }}
-    <input type="submit" name="Créer" value="Créer">
-    {{ form_end(form) }}
+    {{ form_start(showForm, {"attr":{"novalidate":"novalidate", "lol":"pouet"}}) }}
+
+    	{#{{ form_widget(showForm) }}#}
+
+    	{# {{ form_row(showForm.name) }} #}
+
+
+        {% if show is defined %}
+            {% if app.request.attributes.get('_route') == 'show_update' and show.mainPicture is not null %}
+            <div>
+                <label for="existing_picture">Current main picture</label>
+                <img name="existing_picture" width="200px" src="{{ asset(upload_folder ~'/'~ show.mainPicture) }}" alt="{{ show.name }}"/>
+            </div>
+            <hr />
+            {% endif %}
+        {% endif %}
+        {{ form_row(showForm.tmpPicture) }}
+
+    	{{ form_rest(showForm) }}
+
+    	<input type="submit" value="{% if app.request.attributes.get('_route') == 'show_create' %}Create{% else %}Update{% endif %}" />
+    	
+    {{ form_end(showForm) }}
 
 {% endblock %}

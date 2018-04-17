@@ -4,13 +4,11 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="category")
  *
  * @UniqueEntity("name", message="{{ value }} is already in database")
  *
@@ -18,59 +16,36 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Category
 {
+	/**
+	 * @ORM\Id
+	 * @ORM\GeneratedValue
+	 * @ORM\Column(type="integer")
+     *
+	 * @JMS\Expose
+	 */
+	private $id;
+
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="string", unique=true)
+     *
+     * @Assert\NotBlank
      *
      * @JMS\Expose
-     * @JMS\Groups({"full"})
      */
-    protected $id;
+	private $name;
 
-    /**
-     * @ORM\Column(name="name", type="string", length=50, unique=true)
-     * 
-     * @Assert\NotBlank(message="Please enter a name for the category")
-     * @Assert\Length(
-     *      max = 50,
-     *      maxMessage = "La longueur maximale du nom est de {{ limit }} caractères"
-     * )
-     *
-     * @JMS\Expose
-     * @JMS\Groups({"full"})
-     */
-    private $name;
+	public function getName()
+	{
+		return $this->name;
+	}
 
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
 
-    /**
-     *
-     * Constructor of the Document entity
-     *
-     */
-    public function __construct()
-    {
-    }
-
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function update(Category $category)
-    {
-        $this->setName($category->getName());
-    }
+	public function update(Category $category)
+	{
+		$this->name = $category->getName();
+	}
 }

@@ -1,17 +1,9 @@
 {% extends "show/base.html.twig" %}
 
 {% block pageHeading %}
-    Create an user
+Create User
 {% endblock %}
 
-{% block content %}
-
-    {{ form_start(form, {'attr': {'id': 'form-user'}}) }}
-    {# {{ form_widget(form) }} #}
-
-    {{ form_row(form.fullname) }}
-    {{ form_rest(form) }}
-    <input type="submit" name="Créer" value="Créer">
-    {{ form_end(form) }}
-
-{% endblock %}
+{% block content%}
+	{{ form(userForm) }}
+{% endblock content %}

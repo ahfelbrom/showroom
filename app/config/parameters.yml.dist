@@ -3,8 +3,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
     database_host: 127.0.0.1
-    database_port: ~
-    database_name: showroom_alexis
+    database_port: pouet
+    database_name: symfony
     database_user: root
     database_password: ~
     # You should uncomment this if you want to use pdo_sqlite
@@ -15,7 +15,7 @@ parameters:
     mailer_user: ~
     mailer_password: ~
 
-    omdb_api_key: your_key
-
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    OMDB_api_key: your_key

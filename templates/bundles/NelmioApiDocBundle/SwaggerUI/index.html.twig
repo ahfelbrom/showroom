@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Kamoulox</title>
+    <title>Showroom API Doc</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700">
     <link rel="stylesheet" href="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui.css') }}">
@@ -44,7 +44,7 @@
     <div id="swagger-ui" class="api-platform"></div>
 
     <div class="swagger-ui-wrap" style="margin-top: 20px; margin-bottom: 20px;">
-        &copy; {{ 'now'|date("m-Y") }} <a href="https://api-platform.com">Api-Platform</a>
+        &copy; {{ date()|date('d-m-Y') }} <a href="{{ path('show_list')}}">Go to the website</a>
     </div>
 
     <script src="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-bundle.js') }}"></script>

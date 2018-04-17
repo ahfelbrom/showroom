@@ -30,27 +30,31 @@ services:
         tags: ['controller.service_arguments']
 
     # add more services, or override services that need manual wiring
-    # AppBundle\Service\ExampleService:
-    #     arguments:
-    #         $someArgument: 'some_value'
     AppBundle\File\FileUploader:
         arguments:
-            $pathToProject: '%kernel.project_dir%'
             $uploadDirectoryFile: '%upload_directory_file%'
-    
+            $pathToProject: '%kernel.project_dir%'
+
+
     AppBundle\ShowFinder\DBShowFinder:
         tags: ['show.finder']
 
     AppBundle\ShowFinder\OMDBShowFinder:
         arguments:
-            - '@csa_guzzle.client.OMDB_api'
-            - '%omdb_api_key%'
-            - '@security.token_storage'
+            $apiKey: '%OMDB_api_key%'
+            $client: '@csa_guzzle.client.OMBD_api'
+            $tokenStorage: '@security.token_storage'
         tags: ['show.finder']
+
+# Without named parameters
+    #AppBundle\ShowFinder\OMDBShowFinder:
+    #    arguments:
+    #        - '@csa_guzzle.client.OMBD_api'
+    #        - '%OMDB_api_key%'
+    #    tags: ['show.finder']
 
     AppBundle\Security\Authorization\ShowVoter:
         tags: ['security.voter']
-
     AppBundle\Security\Authorization\UserVoter:
         tags: ['security.voter']
 
@@ -61,6 +65,5 @@ services:
     AppBundle\Serializer\Handler\ShowHandler:
         tags: ['jms_serializer.subscribing_handler']
 
-    # ce service ne sert a rien tant que le handler est actif
-    AppBundle\Serializer\Listener\ShowListener:
-        tags: ['jms_serializer.event_subscriber']
+    #AppBundle\Serializer\Listener\ShowListener:
+    #    tags: ['jms_serializer.event_subscriber']

@@ -4,25 +4,27 @@ namespace AppBundle\File;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-
 class FileUploader
 {
-    private $pathToProject;
-    private $uploadDirectoryFile;
+	private $pathToProject;
 
-    public function __construct($pathToProject, $uploadDirectoryFile)
-    {
-        $this->pathToProject = $pathToProject;
-        $this->uploadDirectoryFile = $uploadDirectoryFile;
-    }
+	private $uploadDirectoryFile;
 
-    public function upload(UploadedFile $file, $salt)
-    {
-        $generatedName = time()."_".$salt.".".$file->guessClientExtension();
-        $path = $this->pathToProject."/web".$this->uploadDirectoryFile;
 
-        $file = $file->move($path, $generatedName);
+	public function __construct($pathToProject, $uploadDirectoryFile)
+	{
+		$this->pathToProject = $pathToProject;
+		$this->uploadDirectoryFile = $uploadDirectoryFile;
+	}
 
-        return $generatedName;
-    }
+	public function upload(UploadedFile $file, $salt)
+	{
+		$generatedFileName = time().'_'.$salt.'.'.$file->guessClientExtension();
+        
+        $path = $this->pathToProject.'/web'.$this->uploadDirectoryFile;
+
+        $file->move($path, $generatedFileName);
+
+        return $generatedFileName;
+	}
 }

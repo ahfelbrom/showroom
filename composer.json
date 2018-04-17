@@ -1,26 +1,34 @@
 {
-    "name": "symfony/framework-standard-edition",
-    "license": "MIT",
+    "name": "sarah/showroom",
+    "license": "proprietary",
     "type": "project",
-    "description": "The \"Symfony Standard Edition\" distribution",
     "autoload": {
         "psr-4": {
             "AppBundle\\": "src/AppBundle"
         },
-        "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
+        "classmap": [
+            "app/AppKernel.php",
+            "app/AppCache.php"
+        ]
     },
     "autoload-dev": {
-        "psr-4": { "Tests\\": "tests/" },
-        "files": [ "vendor/symfony/symfony/src/Symfony/Component/VarDumper/Resources/functions/dump.php" ]
+        "psr-4": {
+            "Tests\\": "tests/"
+        },
+        "files": [
+            "vendor/symfony/symfony/src/Symfony/Component/VarDumper/Resources/functions/dump.php"
+        ]
     },
     "require": {
         "php": ">=5.5.9",
-        "csa/guzzle-bundle": "^2.2",
+        "csa/guzzle-bundle": "^3.0",
         "doctrine/doctrine-bundle": "^1.6",
-        "doctrine/doctrine-migrations-bundle": "^1.3",
+        "doctrine/doctrine-migrations-bundle": "^1.0",
         "doctrine/orm": "^2.5",
         "incenteev/composer-parameter-handler": "^2.0",
         "jms/serializer-bundle": "^2.3",
+        "nelmio/api-doc-bundle": "^3.1",
+        "phpunit/phpunit": "^7.1",
         "sensio/distribution-bundle": "^5.0.19",
         "sensio/framework-extra-bundle": "^5.0.0",
         "symfony/monolog-bundle": "^3.1.0",
@@ -31,7 +39,7 @@
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^3.0"
+        "symfony/phpunit-bridge": "^4.0"
     },
     "scripts": {
         "symfony-scripts": [
@@ -50,9 +58,6 @@
         ]
     },
     "config": {
-        "platform": {
-            "php": "5.5.9"
-        },
         "sort-packages": true
     },
     "extra": {
@@ -65,8 +70,6 @@
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         },
-        "branch-alias": {
-            "dev-master": "3.4-dev"
-        }
+        "branch-alias": null
     }
 }

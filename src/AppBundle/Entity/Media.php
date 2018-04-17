@@ -4,63 +4,46 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
 /**
  * @ORM\Entity
- * @ORM\Table(name="media")
  */
 class Media
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+	 * @ORM\Id
+	 * @ORM\GeneratedValue
+	 * @ORM\Column(type="integer")
+	 */
+	private $id;
 
-    private $file;
+	private $file;
 
-    /**
-     * @ORM\Column(name="path", type="string", length=200)
-     */
-    private $path;
+	/**
+	 * @ORM\Column
+	 */
+	private $path;
 
+	public function getFile()
+	{
+		return $this->file;
+	}
 
-    /**
-     *
-     * Constructor of the Document entity
-     *
-     */
-    public function __construct()
-    {
-    }
+	public function setFile($file)
+	{
+		$this->file = $file;
 
-    public function getId()
-    {
-        return $this->id;
-    }
+		return $this;
+	}
 
-    public function setFile($file)
-    {
-        $this->file = $file;
+	public function getPath()
+	{
+		return $this->path;
+	}
 
-        return $this;
-    }
+	public function setPath($path)
+	{
+		$this->path = $path;
 
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    public function setPath($path)
-    {
-        $this->path = $path;
-
-        return $this;
-    }
-
-    public function getPath()
-    {
-        return $this->path;
-    }
+		return $this;
+	}
 }

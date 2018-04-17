@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Welcome on Showroom</title>
+    <title>Showroom</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -23,18 +23,19 @@
     {# {% include "_includes/menu.html.twig" %} #}
 
     {% embed "_includes/menu.html.twig" %}
-      {% block menu_title %}
-        {{ parent() }} by DT - {% if app.environment != 'prod' %}current env = {{ app.environment }}{% endif %}
-      {% endblock %}
+       {% block menu_title %}
+           {{ parent() }} by Dreamteam - {% if app.environment != 'prod' %}Current env = {{ app.environment }}{% endif %}
+       {% endblock %}
     {% endembed %}
 
-    {% for label, message in app.flashes %}
-    <div class="alert alert-{{ label}}" role="alert">
-      {% for mess in message %}
-        {{ mess }}
+    {% for label, messages in app.flashes %}
+    <div class="alert alert-{{ label }}" role="alert">
+      {% for message in messages %}
+          {{ message }}
       {% endfor %}
     </div>
     {% endfor %}
+
     <!-- Page Content -->
     <div class="container">
 
@@ -45,36 +46,29 @@
 
           <h1 class="my-4">
             {% block pageHeading %}
-              List of shows
+              Page Heading
+              <small>Secondary Text</small>
             {% endblock %}
           </h1>
-          {% block content %}{% endblock %}
-        </div>
 
-        <!-- Sidebar Widgets Column -->
+          {% block content%}{% endblock content %}
+        </div>
+          <!-- Sidebar Widgets Column -->
         <div class="col-md-4">
 
           {{ include("_includes/searchBar.html.twig") }}
-          {{ render(controller("AppBundle\\Controller\\ShowController::categoriesAction")) }}
 
-          <!-- Side Widget -->
-          <div class="card my-4">
-            <h5 class="card-header">Side Widget</h5>
-            <div class="card-body">
-              You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
-            </div>
-          </div>
+          {{ render(controller("AppBundle\\Controller\\CategoryController::categoriesAction")) }}
 
         </div>
       </div>
       <!-- /.row -->
     </div>
     <!-- /.container -->
-
     <!-- Footer -->
     <footer class="py-5 bg-dark">
       <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2017</p>
+        <p class="m-0 text-center text-white">Copyright &copy; Symfony course DIM 2018</p>
       </div>
       <!-- /.container -->
     </footer>

@@ -1,39 +1,36 @@
 {% extends "show/base.html.twig" %}
 
 {% block pageHeading %}
-    List of users
+List of users
 {% endblock %}
 
-{% block content %}
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Fullname</th>
-                <th>Username</th>
-                <th>Roles</th>
-                <th>Shows</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-                <tr>
-                    <td scope="row">{{ user.getId() }}</td>
-                    <td>{{ user.getFullname() }}</td>
-                    <td>{{ user.getUsername() }}</td>
-                    <td>{{ user.getRoles() | join(", ") }}</td>
-                    <td>
-                        {% for show in user.getShows() %}
-                            {{ show.name }}
-                            {% if not loop.last %}
-                                ; 
-                            {% endif %}
-                        {% else %}
-                            No shows yet :'(
-                        {% endfor %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endblock %}
+{% block content%}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Fullname</th>
+      <th scope="col">Email</th>
+      <th scope="col">Roles</th>
+      <th scope="col">Shows</th>
+    </tr>
+  </thead>
+  <tbody>
+  	{% for user in users %}
+    <tr>
+      <th scope="row">1</th>
+      <td>{{ user.fullname }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.roles | join(', ')}}</td>
+      <td>
+      {% for show in user.shows %}
+          {{ show.name }}{% if not loop.last %},{% endif %}
+      {% else %}
+          No shows yet!
+      {% endfor %}
+      </td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

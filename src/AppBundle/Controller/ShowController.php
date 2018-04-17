@@ -3,18 +3,16 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Show;
-use AppBundle\Entity\Category;
-use AppBundle\Form\Type\ShowType;
 use AppBundle\File\FileUploader;
+use AppBundle\Type\ShowType;
 use AppBundle\ShowFinder\ShowFinder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-
 
 /**
  * @Route(name="show_")
@@ -23,148 +21,120 @@ class ShowController extends Controller
 {
     /**
      * @Route("/", name="list")
-     *
      */
     public function listAction(Request $request, ShowFinder $showFinder)
     {
-        $showRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Show');
+        $showRepository = $this->getDoctrine()->getRepository('AppBundle:Show');
         $session = $request->getSession();
-        
+
         if ($session->has('query_search_shows')) {
-            $querySearchShows = $session->get('query_search_shows');
-            $shows = $showFinder->searchByName($querySearchShows);
-            
-            $request->getSession()->remove('query_search_shows');
+            $shows = $showFinder->searchByName($session->get('query_search_shows'));
         } else {
             $shows = $showRepository->findAll();
         }
-        
-        return $this->render('show/list.html.twig', array(
-            'shows' => $shows,
-        ));
+
+        return $this->render('show/list.html.twig', ['shows' => $shows]);
     }
 
     /**
-     * @Route("/show/create", name="create")
-     *
+     * @Route("/create", name="create")
      */
     public function createAction(Request $request, FileUploader $fileUploader)
     {
-        $em = $this->getDoctrine()->getManager();
         $show = new Show();
-        
-        $form = $this->createForm
-        (
-            ShowType::class,
-            $show,
-            array
-            ()
-        );
+        $form = $this->createForm(ShowType::class, $show, ['validation_groups' => ['create']]);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $generatedName = $fileUploader->upload($show->getTmpPicture(), $show->getCategory()->getName());
-            $show->setMainPicture($generatedName);
+        if ($form->isValid()) {
+            $generatedFileName = $fileUploader->upload($show->getTmpPicture(), $show->getCategory()->getName());
+
+            $show->setMainPicture($generatedFileName);
             $show->setDataSource(Show::DATA_SOURCE_DB);
+
             $show->setAuthor($this->getUser());
 
+            $em = $this->getDoctrine()->getManager();
             $em->persist($show);
             $em->flush();
 
-            $this->addFlash('success', 'La série a bien été enregistrée');
+            $this->addFlash('success', 'You successfully added a new show!');
 
             return $this->redirectToRoute('show_list');
         }
 
-        return $this->render('show/create.html.twig', array(
-            'form' => $form->createView()
-        ));
+        return $this->render('show/create.html.twig', ['showForm' => $form->createView()]);
     }
 
     /**
-     * @Route("/show/update/{id}", name="update")
+     * @Route("/update/{id}", name="update")
      */
-    public function updateAction(Request $request, Show $show, FileUploader $fileUploader)
+    public function updateAction(Show $show, Request $request, FileUploader $fileUploader)
     {
-        $em = $this->getDoctrine()->getManager();
-        $form = $this->createForm
-        (
-            ShowType::class,
-            $show,
-            array
-            (
-                'validation_groups' => ['update']
-            )
-        );
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $generatedName = $fileUploader->upload($show->getTmpPicture(), $show->getCategory()->getName());
-            $show->setMainPicture($generatedName);
-            $em->persist($show);
-            $em->flush();
-            $this->addFlash('success', 'La série a bien été modifiée');
+        $showForm = $this->createForm(ShowType::class, $show, [
+            'validation_groups' => ['update']
+        ]);
+
+        $showForm->handleRequest($request);
+
+        if ($showForm->isValid()) {
+            if ($show->getTmpPicture() != null) {
+
+                $generatedFileName = $fileUploader->upload($show->getTmpPicture(), $show->getCategory()->getName());
+
+                $show->setMainPicture($generatedFileName);
+            }
+
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash('success', 'You successfully update the show!');
+
             return $this->redirectToRoute('show_list');
         }
 
-        return $this->render('show/create.html.twig', array(
-            'form' => $form->createView()
-        ));
-    }
-
-    public function categoriesAction(Request $request)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $categories = $em->getRepository('AppBundle:Category')->findAll();
-        
-        return $this->render(
-            '_includes/categories.html.twig',
-            [
-                'categories' => $categories
-            ]
-        );
+        return $this->render('show/create.html.twig', [
+            'showForm' => $showForm->createView(),
+            'show' => $show,
+        ]);
     }
 
     /**
-     * @Route("/show/search", name="search")
+     * @Route("/search", name="search")
      * @Method({"POST"})
      */
     public function searchAction(Request $request)
     {
-        $request->getSession()->set('query_search_shows', $request->request->get('name'));
-        
+        $request->getSession()->set('query_search_shows', $request->request->get('query'));
+
         return $this->redirectToRoute('show_list');
     }
 
     /**
-     * @Route("/show/delete", name="delete")
-     * @Method({"POST"})
+     * @Route("/delete", name="delete")
+     * @Method({"DELETE"})
      */
     public function deleteAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager)
     {
-        $em = $this->getDoctrine()->getManager();
+        $doctrine = $this->getDoctrine();
         $showId = $request->request->get('show_id');
 
-        $show = $em->getRepository('AppBundle:Show')->findOneById($showId);
-        if (!$show)
-        {
-            throw new NotFoundHttpException(sprintf("There is no show with id : %d", $showId));
-            
+        //$show = $this->getDoctrine()->getRepository('AppBundle:Show')->findOneBy(['id' => $showId]);
+
+        if (!$show = $doctrine->getRepository('AppBundle:Show')->findOneById($showId)) {
+            throw new NotFoundHttpException(sprintf('There is no show with the id %d', $showId));
         }
 
-        $csrfToken = new CsrfToken('delete_show', $request->request->get('csrf_token'));
+        $csrfToken = new CsrfToken('delete_show', $request->request->get('_csrf_token'));
 
         if ($csrfTokenManager->isTokenValid($csrfToken)) {
-            $this->getUser()->removeShow($show);
-            $em->remove($show);
-            $em->flush();
-            unlink(__DIR__."/../../../web/upload/".$show->getMainPicture());
-            $this->addFlash('success', 'the show has been removed for ever :D');
-        } else {
-            $this->addFlash('error', 'The csrf token is not valid. Stopping deletion');
-        }
+            $doctrine->getManager()->remove($show);
+            $doctrine->getManager()->flush();
 
-        
-        return $this->redirectToRoute("show_list");
+            $this->addFlash('success', 'The show have been successfully deleted.');
+        } else {
+            $this->addFlash('danger', 'Then csrf token is not valid. The deletion was not completed.');
+        }        
+
+        return $this->redirectToRoute('show_list');
     }
 }

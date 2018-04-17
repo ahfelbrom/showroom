@@ -6,20 +6,20 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class DBShowFinder implements ShowFinderInterface
 {
-    private $doctrine;
+	private $doctrine;
 
-    public function __construct(RegistryInterface $doctrine)
-    {
-        $this->doctrine = $doctrine;
-    }
+	public function __construct(RegistryInterface $doctrine)
+	{
+		$this->doctrine = $doctrine;
+	}
 
-    public function findByName($query)
-    {
-        return $this->doctrine->getRepository('AppBundle:Show')->findAllByName($query);
-    }
+	public function findByName($query)
+	{
+		return $this->doctrine->getRepository('AppBundle:Show')->findAllByQuery($query);
+	}
 
-    public function getName()
-    {
-        return "local client";
-    }
+	public function getName()
+	{
+		return 'Local Database';
+	}
 }
