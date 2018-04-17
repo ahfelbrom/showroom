@@ -69,7 +69,7 @@ class ApiUserPasswordAuthenticatorTest extends TestCase
 		$authenticator = new ApiUserPasswordAuthenticator($encoderFactory);
 
 		$user = new User();
-		$user->setPassword('$argon2id$v=19$m=65536,t=2,p=1$qhXlt5Ez1ago3+MLn5WyxQ$NzRrfyjkOKR6XctaEBaS7qbkx71/5+O4g91MNb4EpuU');
+		$user->setPassword('$argon2i$v=19$m=1024,t=2,p=2$Lk5ZTm4yRlBEMERMNGhLag$axdebkgW13+Jg5tZEaX3SnvZdyY3FFJYP4MujWhz2jc');
 		$credentials = ['username' => 'ME', 'password' => 'mypwd'];
 
 		$result = $authenticator->checkCredentials($credentials, $user);
